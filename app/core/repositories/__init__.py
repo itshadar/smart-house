@@ -1,0 +1,4 @@
+from .tv_repository import TVRepository
+from .electronic_device_repository import ElectronicDeviceRepository
+from .microwave_repository import MicrowaveRepository
+from .air_conditioner_repository import AirConditionerRepository
