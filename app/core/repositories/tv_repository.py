@@ -1,15 +1,16 @@
-from models import TV
-from .electronic_device_repository import ElectronicDeviceRepository
+from app.core.models import TV
+from .electronic_device_repository import ElectronicDeviceSQLRepository
 
 
-class TVRepository(ElectronicDeviceRepository):
+class TVSQLRepository(ElectronicDeviceSQLRepository):
 
     _model = TV
 
-    def get_channel(self, id: int):
-        return self._session.query(self._model.channel).filter_by(id=id).scalar()
+    async def get_channel(self, device_id: int):
+        statement = self._build_statement("channel", id=device_id)
+        return await self.get_scalar(statement)
 
-    def set_channel(self, id: int, channel: int):
-        tv = self.get_by_id(id)
+    async def set_channel(self, device_id: int, channel: int):
+        tv = await self.get_by_id(device_id)
         tv.channel = channel
-        self.update(tv)
+        await self.update(tv)

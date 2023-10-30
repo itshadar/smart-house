@@ -1,4 +1,4 @@
-from constants import DeviceType
+from app.core.utilities import DeviceType
 from abc import ABC, abstractmethod
 from .base_command_set import BaseCommandSet
 from .electronic_device_command_set import ElectronicDeviceCommandSet
@@ -29,13 +29,13 @@ class DeviceCommandSetFactory(CommandSetFactory):
     }
 
     @classmethod
-    def create(cls, device_type, device_id, app, controller) -> ElectronicDeviceCommandSet:
+    def create(cls, device_type: DeviceType, device_id, app) -> ElectronicDeviceCommandSet:
         command_set_class = cls.COMMAND_SETS.get(device_type, ElectronicDeviceCommandSet)
-        return command_set_class(app, controller, device_id)
+        return command_set_class(app, device_id)
 
     @classmethod
-    def setup(cls, device_type: DeviceType, device_id, app, controller):
-        device_command_set = cls.create(device_type, device_id, app, controller)
+    def setup(cls, device_type: DeviceType, device_id, app):
+        device_command_set = cls.create(device_type, device_id, app)
         device_command_set.register_commands()
 
 

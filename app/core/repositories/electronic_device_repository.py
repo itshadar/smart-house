@@ -1,24 +1,30 @@
-from models import ElectronicDevice
-from schemas import DeviceMetadata
+from app.core.models import ElectronicDevice
+from app.core.schemas import DeviceMetadata
 from .sql_repository import SQLRepository
-from constants import DeviceStatus
+from app.core.utilities import DeviceStatus
+#from app.core.db_operations import get_async_uow
+import anyio
 
-class ElectronicDeviceRepository(SQLRepository):
+from sqlalchemy import select, text
+
+
+class ElectronicDeviceSQLRepository(SQLRepository):
 
     _model = ElectronicDevice
 
     def __init__(self, session):
         super().__init__(session, self._model)
 
-    def get_devices_metadata(self, **filters) -> list[tuple]:
+    async def get_devices_metadata(self, **filters) -> list[tuple]:
         statement = self._build_statement(*DeviceMetadata._fields, **filters)
-        return self._session.execute(statement).all()
+        return await self.get_all(statement)
 
-    def get_status(self, device_id: int):
-        return self._session.query(self._model.status).filter_by(id=device_id).scalar()
+    async def get_status(self, device_id: int) -> DeviceStatus:
+        statement = self._build_statement("status", id=device_id)
+        return await self.get_scalar(statement)
 
-    def set_status(self, device_id: int, status: DeviceStatus):
-        device = self.get_by_id(device_id)
+    async def set_status(self, device_id: int, status: DeviceStatus):
+        device = await self.get_by_id(device_id)
         device.status = status
-        self.update(device)
+        await self.update(device)
 

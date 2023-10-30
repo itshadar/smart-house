@@ -1,17 +1,21 @@
-from .interface_respository import IRepository
-from sqlalchemy.orm import Session
-from sqlalchemy.sql import select, and_
+from .base_repository import IRepository
+from sqlalchemy import select, and_
+from sqlalchemy.ext.asyncio import AsyncSession
+#from sqlalchemy.future import select
+
+#from sqlalchemy.sql import select, and_
+from typing import Union
 
 
 class SQLRepository(IRepository):
 
-    def __init__(self, session: Session, model):
+    def __init__(self, session: AsyncSession, model):
         self._session = session
         self._model = model
 
-    def create(self, **data):
+    async def create(self, **data):
         record = self._model(**data)
-        self.add(record)
+        await self.add(record)
 
     def _build_statement(self, *attrs, **filters):
         select_entities = self._get_select_entities(*attrs)
@@ -48,26 +52,35 @@ class SQLRepository(IRepository):
             statement = statement.where(and_(*where_clauses))
         return statement
 
-    def get_by_id(self, id: int):
-        return self._session.query(self._model).filter_by(id=id).first()
+    async def get_by_id(self, id: int):
+        return await self._session.get(self._model, id)
 
-    def get_all(self):
-        return self._session.query(self._model).all()
+    async def list_all(self):
+        result = await self._session.execute(statement=select(self._model))
+        return result.all()
 
-    def add(self, record):
+    async def get_all(self, statement):
+        result = await self._session.execute(statement)
+        return result.all()
+
+    async def get_scalar(self, statement):
+        result = await self._session.execute(statement)
+        return result.scalar()
+
+    async def add(self, record):
         self._session.add(record)
-        self._session.flush()
-        self._session.refresh(record)
+        await self._session.flush()
+        await self._session.refresh(record)
         return record
 
-    def update(self, record):
+    async def update(self, record):
         self._session.add(record)
-        self._session.flush()
-        self._session.refresh(record)
+        await self._session.flush()
+        #await self._session.refresh(record)
         return record
 
-    def delete(self, id):
-        record = self.get_by_id(id)
+    async def delete(self, id):
+        record = await self.get_by_id(id)
         if record is not None:
-            self._session.delete(record)
-            self._session.flush()
+            await self._session.delete(record)
+            await self._session.flush()

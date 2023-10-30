@@ -1,33 +1,34 @@
 from .base_command_set import BaseCommandSet
-from typer import Argument, echo, Context, Typer
-import time
-from constants import DeviceStatus
+from typer import Argument, echo, Typer
+from app.core.utilities import DeviceStatus
+from app.core.db_operations import get_uow, get_async_uow
+import anyio
+import asyncio
+
 
 
 class ElectronicDeviceCommandSet(BaseCommandSet):
 
-    def __init__(self, app, controller, device_id):
-        super().__init__(app, controller)
+    def __init__(self, app: Typer, device_id: int):
+        super().__init__(app)
         self.device_id = device_id
 
-    def set_log(self, attr, attr_value):
+    def echo_set_cmd(self, attr: str, attr_value: any):
         echo(f"Set {self.app.info.name} {attr} to {attr_value}")
 
-    def get_log(self, attr, attr_value):
+    def echo_get_command(self, attr: str, attr_value: any):
         echo(f"{self.app.info.name} {attr} is {attr_value}")
-
-    @staticmethod
-    def error_log(err, command=None):
-        echo(err, err=True)
 
     def commands(self):
 
         @self.app.command()
-        def get_status(ctx: Context):
-            status: DeviceStatus = self.controller.get_status(self.device_id)
-            self.get_log("status", status.name)
+        async def get_status():
+            async with get_async_uow() as uow:
+                status: DeviceStatus = await uow.electronic_devices.get_status(self.device_id)
+            self.echo_get_command("status", status.name)
 
         @self.app.command()
-        def set_status(ctx: Context, status: DeviceStatus = Argument(default='OFF')):
-            self.controller.set_status(self.device_id, status)
-            self.set_log("status", status.name)
+        async def set_status(status: DeviceStatus = Argument(default='OFF')):
+            async with get_async_uow() as uow:
+                await uow.electronic_devices.set_status(self.device_id, status)
+            self.echo_set_cmd("status", status.name)

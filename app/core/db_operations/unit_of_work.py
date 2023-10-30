@@ -1,8 +1,10 @@
-from app.core.repositories import ElectronicDeviceRepository, MicrowaveRepository, TVRepository, AirConditionerRepository
+from app.core.repositories import ElectronicDeviceSQLRepository, MicrowaveSQLRepository, TVSQLRepository, AirConditionerSQLRepository
 from abc import ABC, abstractmethod
 from typing import Callable
 from sqlalchemy.orm import Session
-from .session import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
+from .session import get_session, get_async_session
+
 
 class UnitOfWorkBase(ABC):
 
@@ -13,7 +15,7 @@ class UnitOfWorkBase(ABC):
 
         if exc_type:
             self.rollback()
-            raise exc_type
+            raise exc_val
         else:
             self.commit()
         self.close()
@@ -31,13 +33,53 @@ class UnitOfWorkBase(ABC):
         raise NotImplementedError()
 
 
+class AsyncUnitOfWork(UnitOfWorkBase):
+    def __init__(self, session_factory: Callable[[], AsyncSession]) -> None:
+        self._session_factory = session_factory
+        self._session: AsyncSession = None
+        self.electronic_devices = None
+        self.tvs = None
+        self.microwaves = None
+        self.air_conditioners = None
+
+    async def __aenter__(self):
+        self._session = self._session_factory()
+        self.electronic_devices = ElectronicDeviceSQLRepository(self._session)
+        self.tvs = TVSQLRepository(self._session)
+        self.microwaves = MicrowaveSQLRepository(self._session)
+        self.air_conditioners = AirConditionerSQLRepository(self._session)
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            await self.rollback()
+            raise exc_val
+        else:
+            await self.commit()
+        await self.close()
+
+    async def commit(self):
+        await self._session.commit()
+
+    async def rollback(self):
+        await self._session.rollback()
+
+    async def close(self):
+        await self._session.close()
+        self._session = None
+
+
 class UnitOfWork(UnitOfWorkBase):
     def __init__(self, session_factory: Callable[[], Session]) -> None:
         self._session_factory = session_factory
-        self._session = None
+        self._session: Session = None
 
     def __enter__(self):
         self._session = self._session_factory()
+        self.electronic_devices = ElectronicDeviceSQLRepository(self._session)
+        self.tvs = TVSQLRepository(self._session)
+        self.microwaves = MicrowaveSQLRepository(self._session)
+        self.air_conditioners = AirConditionerSQLRepository(self._session)
         return super().__enter__()
 
     def commit(self):
@@ -50,22 +92,11 @@ class UnitOfWork(UnitOfWorkBase):
         self._session.close()
         self._session = None
 
-    @property
-    def electronic_devices(self):
-        return ElectronicDeviceRepository(self._session)
-
-    @property
-    def microwaves(self):
-        return MicrowaveRepository(self._session)
-
-    @property
-    def tvs(self):
-        return TVRepository(self._session)
-
-    @property
-    def air_conditioners(self):
-        return AirConditionerRepository(self._session)
-
 
 def get_uow():
-     return UnitOfWork(get_session)
+    return UnitOfWork(get_session)
+
+
+def get_async_uow():
+    return AsyncUnitOfWork(get_async_session)
+

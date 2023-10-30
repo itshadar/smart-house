@@ -1,16 +1,17 @@
-from models import AirConditioner
-from .electronic_device_repository import ElectronicDeviceRepository
+from app.core.models import AirConditioner
+from .electronic_device_repository import ElectronicDeviceSQLRepository
 
 
-class AirConditionerRepository(ElectronicDeviceRepository):
+class AirConditionerSQLRepository(ElectronicDeviceSQLRepository):
 
     _model = AirConditioner
 
-    def get_degrees(self, id: int) -> int:
-        return self._session.query(self._model.degrees).filter_by(id=id).scalar()
+    async def get_degrees(self, device_id: int) -> int:
+        statement = self._build_statement("degrees", id=device_id)
+        return await self.get_scalar(statement)
 
-    def set_degrees(self, id: int, degrees: int):
-        ac = self.get_by_id(id)
+    async def set_degrees(self, device_id: int, degrees: int):
+        ac = await self.get_by_id(device_id)
         ac.degrees = degrees
-        self.update(ac)
+        await self.update(ac)
 

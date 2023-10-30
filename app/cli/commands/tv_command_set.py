@@ -1,6 +1,7 @@
-from typer import Argument, Context
+from typer import Argument
 from .electronic_device_command_set import ElectronicDeviceCommandSet
-from constants import TVSettings
+from app.core.utilities import TVSettings
+from app.core.db_operations import get_async_uow
 
 
 class TVCommandSet(ElectronicDeviceCommandSet):
@@ -9,16 +10,14 @@ class TVCommandSet(ElectronicDeviceCommandSet):
         super().commands()
 
         @self.app.command()
-        def switch_channel(ctx: Context,
-                           channel: int = Argument(...,
-                                                   help="channel value",
-                                                   min=TVSettings.MIN_CHANNEL)):
-
-            self.controller.switch_channel(self.device_id, channel)
-            self.set_log("channel", channel)
+        async def switch_channel(channel: int = Argument(..., help="channel value",
+                                                         min=TVSettings.MIN_CHANNEL)):
+            async with get_async_uow() as uow:
+                await uow.tvs.set_channel(self.device_id, channel)
+            self.echo_set_cmd("channel", channel)
 
         @self.app.command()
-        def get_channel(ctx: Context):
-            channel = self.controller.get_channel(self.device_id)
-            self.get_log("channel", channel)
-
+        async def get_channel():
+            async with get_async_uow() as uow:
+                channel = await uow.tvs.get(self.device_id)
+            self.echo_get_command("channel", channel)
