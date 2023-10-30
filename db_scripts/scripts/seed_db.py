@@ -1,27 +1,38 @@
 import json
 import os
-from constants import DeviceType
-from database import get_session, UnitOfWork
-from app.core.controllers import ControllerFactory
+from anyio import run
+from app.core.utilities import DeviceType
+from app.core.db_operations import get_uow, get_async_uow
 
-json_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../seed_data/devices.json")  # TODO: USE PICKLE?
-# Load data from the JSON file
-with open(json_file_path, "r") as json_file:
-    data_to_insert_list = json.load(json_file)
+repository_class = {DeviceType.TV: "electronic_devices",
+                    DeviceType.MICROWAVE: "microwaves",
+                    DeviceType.AIRCONDITIONER: "air_conditioners"}
 
 
-def seed_data():
+def read_seed_file() -> list[dict]:
+    json_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  "../seed_data/devices.json")
+    with open(json_file_path, "r") as json_file:
+        data_to_seed = json.load(json_file)
+    return data_to_seed
 
-    # # todo: validate json data
-    with UnitOfWork(get_session) as uow:
+def normalize_data(data_list: list[dict]):
 
-        for data in data_to_insert_list:
+    for data in data_list:
+        data["type"] = DeviceType(data["type"])
+        yield data
 
-            data["type"] = DeviceType(data["type"])
-            controller = ControllerFactory.create(data["type"], uow)
-            controller.create(**data)
+
+async def seed_data():
+
+    data_to_seed = read_seed_file()
+
+    async with get_async_uow() as uow:
+        for data in normalize_data(data_to_seed):
+            repo = getattr(uow, repository_class.get(data["type"], "electronic_devices"))
+            await repo.create(**data)
 
 
 if __name__ == "__main__":
-    seed_data()
+    run(seed_data)
 
