@@ -2,7 +2,7 @@ FROM python:3.10-slim-buster
 
 WORKDIR /app
 
-COPY ./Pipfile ./Pipfile.lock ./
+COPY ./Pipfile ./
 COPY ./config.py ./
 COPY ./db_scripts ./db_scripts
 COPY ./app/cli ./app/cli

@@ -27,3 +27,7 @@ services:
 
     command: /bin/sh -c "pipenv run create && pipenv run migrate
               && pipenv run seed"
+
+
+volumes:
+  postgres_data:
