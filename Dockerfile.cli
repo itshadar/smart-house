@@ -1,34 +1,20 @@
-# Use the official Python image as a parent image
-FROM python:3.9-slim-buster
+FROM python:3.10-slim-buster
 
-# Set environment variables
-ENV POSTGRES_HOST=localhost \
-    POSTGRES_PORT=5432 \
-    POSTGRES_USER=postgres \
-    POSTGRES_PASSWORD=your_password \
-    POSTGRES_DB_NAME=smarthouse
-
-RUN apt-get update && apt-get install -y \
-    postgresql \
-    postgresql-contrib \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY ./advanced /app
+COPY ./Pipfile ./Pipfile.lock ./
+COPY ./config.py ./
+COPY ./db_scripts ./db_scripts
+COPY ./app/cli ./app/cli
+COPY ./app/core  ./app/core
+COPY ./app/__init__.py  ./app/
+COPY ./alembic.ini  ./
 
-# Install Python dependencies
-RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
 
-# Start PostgreSQL service
-RUN service postgresql start
+RUN apt-get update && apt-get install -y gcc libpq-dev && apt-get clean
+RUN pip install pipenv
+RUN pipenv install --deploy
 
-# Create and seed the database
-RUN python db_scripts/scripts/create_db.py
-RUN python db_scripts/scripts/seed_db.py
 
-# The command to run on container start
-CMD ["pipenv", "run", "your_app_start_command"]
+ENTRYPOINT ["pipenv", "run", "python", "-m", "app.cli"]
+
