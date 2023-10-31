@@ -9,10 +9,10 @@ try:
         port=db_config["POSTGRES_PORT"],
         user=db_config["POSTGRES_USER"],
         password=db_config["POSTGRES_PASSWORD"],
-        database=db_config["POSTGRES_DB_NAME"]
+        database=db_config["POSTGRES_DB"]
     )
 
-    database_name = db_config["POSTGRES_DB_NAME"]
+    database_name = db_config["POSTGRES_DB"]
     # Create a cursor object
     cursor = connection.cursor()
 

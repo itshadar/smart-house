@@ -10,7 +10,7 @@ try:
         password=db_config["POSTGRES_PASSWORD"]
     )
 
-    database_name = db_config["POSTGRES_DB_NAME"]
+    database_name = db_config["POSTGRES_DB"]
     # Create a cursor object
     cursor = connection.cursor()
 

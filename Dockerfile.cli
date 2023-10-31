@@ -1,0 +1,34 @@
+# Use the official Python image as a parent image
+FROM python:3.9-slim-buster
+
+# Set environment variables
+ENV POSTGRES_HOST=localhost \
+    POSTGRES_PORT=5432 \
+    POSTGRES_USER=postgres \
+    POSTGRES_PASSWORD=your_password \
+    POSTGRES_DB_NAME=smarthouse
+
+RUN apt-get update && apt-get install -y \
+    postgresql \
+    postgresql-contrib \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY ./advanced /app
+
+# Install Python dependencies
+RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
+
+# Start PostgreSQL service
+RUN service postgresql start
+
+# Create and seed the database
+RUN python db_scripts/scripts/create_db.py
+RUN python db_scripts/scripts/seed_db.py
+
+# The command to run on container start
+CMD ["pipenv", "run", "your_app_start_command"]

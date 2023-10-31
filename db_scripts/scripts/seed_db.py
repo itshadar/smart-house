@@ -28,9 +28,11 @@ async def seed_data():
     data_to_seed = read_seed_file()
 
     async with get_async_uow() as uow:
-        for data in normalize_data(data_to_seed):
-            repo = getattr(uow, repository_class.get(data["type"], "electronic_devices"))
-            await repo.create(**data)
+        exist_devices = await uow.electronic_devices.list_all()
+        if not exist_devices:
+            for data in normalize_data(data_to_seed):
+                repo = getattr(uow, repository_class.get(data["type"], "electronic_devices"))
+                await repo.create(**data)
 
 
 if __name__ == "__main__":
