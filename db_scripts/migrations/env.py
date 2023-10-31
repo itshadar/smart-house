@@ -2,22 +2,24 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
-
 from dotenv import load_dotenv
-from app.core.models import Base
-
+import sys
 import os
+
+sys.path = ['', '..'] + sys.path[1:]
+
+from app.core.models import Base
+from config import db_config, database_uri
 
 load_dotenv()
 
 # Use os.environ to retrieve environment variables
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
-POSTGRES_USER = os.environ.get("POSTGRES_USER")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
-POSTGRES_DB_NAME = os.environ.get("POSTGRES_DB_NAME")
+POSTGRES_HOST = db_config.get("POSTGRES_HOST")
+POSTGRES_PORT = db_config.get("POSTGRES_PORT")
+POSTGRES_USER = db_config.get("POSTGRES_USER")
+POSTGRES_PASSWORD = db_config.get("POSTGRES_PASSWORD")
+POSTGRES_DB = db_config.get("POSTGRES_DB")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -38,8 +40,7 @@ target_metadata = Base.metadata     # UPDATED
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-DB_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB_NAME}"
-config.set_main_option('sqlalchemy.url', DB_URL)
+config.set_main_option('sqlalchemy.url', database_uri)
 
 
 def run_migrations_offline() -> None:
