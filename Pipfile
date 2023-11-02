@@ -23,6 +23,10 @@ asyncpg = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-asyncio = "*"
+aiosqlite = "*"
+pytest-mock-resources = "*"
+python-on-whales = "*"
 
 [requires]
 python_version = "3.10"
