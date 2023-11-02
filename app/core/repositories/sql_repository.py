@@ -1,29 +1,29 @@
 from .base_repository import IRepository
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, Select, Row
 from sqlalchemy.ext.asyncio import AsyncSession
-#from sqlalchemy.future import select
+from typing import Type, TypeVar
 
-#from sqlalchemy.sql import select, and_
-from typing import Union
+TModel = TypeVar('TModel')
 
 
 class SQLRepository(IRepository):
 
-    def __init__(self, session: AsyncSession, model):
+    def __init__(self, session: AsyncSession, model: Type[TModel]):
         self._session = session
         self._model = model
 
-    async def create(self, **data):
+    async def create(self, **data) -> TModel:
         record = self._model(**data)
         await self.add(record)
+        return record
 
-    def _build_statement(self, *attrs, **filters):
+    def _build_statement(self, *attrs, **filters) -> Select:
         select_entities = self._get_select_entities(*attrs)
         statement = select().add_columns(*select_entities)
         statement = self._filter_statement(statement, **filters)
         return statement
 
-    def _get_select_entities(self, *attributes):
+    def _get_select_entities(self, *attributes) -> list[any]:
 
         select_entities = []
 
@@ -36,10 +36,9 @@ class SQLRepository(IRepository):
         if not select_entities:
             select_entities = [self._model]
 
-        # Create the select statement
         return select_entities
 
-    def _filter_statement(self, statement, **filters):
+    def _filter_statement(self, statement, **filters) -> Select:
         where_clauses = []
         for c, v in filters.items():
             if not hasattr(self._model, c):
@@ -52,34 +51,33 @@ class SQLRepository(IRepository):
             statement = statement.where(and_(*where_clauses))
         return statement
 
-    async def get_by_id(self, id: int):
+    async def get_by_id(self, id: int) -> TModel:
         return await self._session.get(self._model, id)
 
-    async def list_all(self):
+    async def list_all(self) -> list[TModel]:
         result = await self._session.execute(statement=select(self._model))
-        return result.all()
+        return result.scalars().all()
 
-    async def get_all(self, statement):
+    async def get_all(self, statement: Select) -> list[Row] | Row:
         result = await self._session.execute(statement)
         return result.all()
 
-    async def get_scalar(self, statement):
+    async def get_scalar(self, statement: Select) -> TModel:
         result = await self._session.execute(statement)
-        return result.scalar()
+        return result.scalar_one_or_none()
 
-    async def add(self, record):
+    async def add(self, record: TModel) -> TModel:
         self._session.add(record)
         await self._session.flush()
         await self._session.refresh(record)
         return record
 
-    async def update(self, record):
+    async def update(self, record: TModel) -> TModel:
         self._session.add(record)
         await self._session.flush()
-        #await self._session.refresh(record)
         return record
 
-    async def delete(self, id):
+    async def delete(self, id: int):
         record = await self.get_by_id(id)
         if record is not None:
             await self._session.delete(record)

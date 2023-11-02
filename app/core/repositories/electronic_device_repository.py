@@ -2,10 +2,6 @@ from app.core.models import ElectronicDevice
 from app.core.schemas import DeviceMetadata
 from .sql_repository import SQLRepository
 from app.core.utilities import DeviceStatus
-#from app.core.db_operations import get_async_uow
-import anyio
-
-from sqlalchemy import select, text
 
 
 class ElectronicDeviceSQLRepository(SQLRepository):
@@ -15,9 +11,10 @@ class ElectronicDeviceSQLRepository(SQLRepository):
     def __init__(self, session):
         super().__init__(session, self._model)
 
-    async def get_devices_metadata(self, **filters) -> list[tuple]:
+    async def get_devices_metadata(self, **filters) -> list[DeviceMetadata]:
         statement = self._build_statement(*DeviceMetadata._fields, **filters)
-        return await self.get_all(statement)
+        devices_metadata = await self.get_all(statement)
+        return [DeviceMetadata(*device) for device in devices_metadata]
 
     async def get_status(self, device_id: int) -> DeviceStatus:
         statement = self._build_statement("status", id=device_id)
