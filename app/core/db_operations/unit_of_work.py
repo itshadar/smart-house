@@ -1,6 +1,6 @@
 from app.core.repositories import ElectronicDeviceSQLRepository, MicrowaveSQLRepository, TVSQLRepository, AirConditionerSQLRepository
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Union
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from .session import get_session, get_async_session
@@ -67,34 +67,6 @@ class AsyncUnitOfWork(UnitOfWorkBase):
     async def close(self):
         await self._session.close()
         self._session = None
-
-
-class UnitOfWork(UnitOfWorkBase):
-    def __init__(self, session_factory: Callable[[], Session]) -> None:
-        self._session_factory = session_factory
-        self._session: Session = None
-
-    def __enter__(self):
-        self._session = self._session_factory()
-        self.electronic_devices = ElectronicDeviceSQLRepository(self._session)
-        self.tvs = TVSQLRepository(self._session)
-        self.microwaves = MicrowaveSQLRepository(self._session)
-        self.air_conditioners = AirConditionerSQLRepository(self._session)
-        return super().__enter__()
-
-    def commit(self):
-        self._session.commit()
-
-    def rollback(self):
-        self._session.rollback()
-
-    def close(self):
-        self._session.close()
-        self._session = None
-
-
-def get_uow():
-    return UnitOfWork(get_session)
 
 
 def get_async_uow():
