@@ -1,6 +1,7 @@
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy import Integer, Enum, Column, String, ForeignKey
-from app.core.utilities import AirConditionerSettings, MicrowaveSettings, TVSettings, DeviceStatus, DeviceType
+from app.core.utilities import AirConditionerSettings, MicrowaveSettings, TVSettings, ElectronicDeviceSettings
+from app.core.utilities import DeviceStatus, DeviceType
 
 Base = declarative_base()
 
@@ -10,7 +11,7 @@ class ElectronicDevice(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
     location = Column(String, nullable=True)
-    status = Column(Enum(DeviceStatus), default=DeviceStatus.OFF)
+    status = Column(Enum(DeviceStatus), default=ElectronicDeviceSettings.DEFAULT_STATUS)
     type = Column(Enum(DeviceType), default=DeviceType.OTHER)
     __mapper_args__ = {
         "polymorphic_identity": DeviceType.OTHER,
