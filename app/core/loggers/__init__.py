@@ -1,1 +1,1 @@
-from .electronic_device_command_logger import ElectronicDeviceCommandLogger
+from .electronic_device_logger import ElectronicDeviceLogger

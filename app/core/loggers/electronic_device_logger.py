@@ -1,7 +1,7 @@
 import logging
 
 
-class ElectronicDeviceCommandLogger(logging.Logger):
+class ElectronicDeviceLogger(logging.Logger):
 
     def set_log(self, device_name: str, attr: str, attr_value: any):
         self.info(f"Set {device_name} {attr} to {attr_value}")
