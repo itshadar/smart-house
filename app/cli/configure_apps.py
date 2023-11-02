@@ -1,7 +1,9 @@
+import asyncio
 from typer import Context
 from .commands import DeviceCommandSetFactory
 from app.cli.utilities.async_typer import AsyncTyper
 from app.core.utilities import DeviceType
+from app.core.schemas import DeviceMetadata
 from app.core.db_operations import AsyncUnitOfWork
 
 
@@ -26,3 +28,16 @@ def build_device_app(device_name: str, device_id: int, device_type: DeviceType, 
     DeviceCommandSetFactory.setup(device_type, device_app)
     return device_app
 
+
+async def get_available_devices(async_uow: AsyncUnitOfWork) -> list[DeviceMetadata]:
+    async with async_uow as uow:
+        return await uow.electronic_devices.get_devices_metadata()
+
+
+def build_app(async_uow: AsyncUnitOfWork):
+    devices = asyncio.get_event_loop().run_until_complete(get_available_devices(async_uow))
+    app = AsyncTyper(name="Smart House", help=f"Available Commands for Smart House App", no_args_is_help=True)
+    for device in devices:
+        device_app = build_device_app(device.name, device.id, device.type, async_uow)
+        app.add_typer(device_app, name=device.name)
+    return app

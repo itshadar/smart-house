@@ -29,13 +29,13 @@ class DeviceCommandSetFactory(CommandSetFactory):
     }
 
     @classmethod
-    def create(cls, device_type: DeviceType, device_id, app) -> ElectronicDeviceCommandSet:
+    def create(cls, device_type: DeviceType, app) -> ElectronicDeviceCommandSet:
         command_set_class = cls.COMMAND_SETS.get(device_type, ElectronicDeviceCommandSet)
-        return command_set_class(app, device_id)
+        return command_set_class(app)
 
     @classmethod
-    def setup(cls, device_type: DeviceType, device_id, app):
-        device_command_set = cls.create(device_type, device_id, app)
+    def setup(cls, device_type: DeviceType, app):
+        device_command_set = cls.create(device_type, app)
         device_command_set.register_commands()
 
 
