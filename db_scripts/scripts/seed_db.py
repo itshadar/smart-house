@@ -2,9 +2,9 @@ import json
 import os
 from anyio import run
 from app.core.utilities import DeviceType
-from app.core.db_operations import get_uow, get_async_uow
+from app.core.db_operations import get_async_uow
 
-repository_class = {DeviceType.TV: "electronic_devices",
+repository_class = {DeviceType.TV: "tvs",
                     DeviceType.MICROWAVE: "microwaves",
                     DeviceType.AIRCONDITIONER: "air_conditioners"}
 
