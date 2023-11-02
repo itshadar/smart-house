@@ -1,3 +1,10 @@
+from .enums import DeviceStatus, DeviceType
+
+
+class ElectronicDeviceSettings:
+    DEFAULT_STATUS = DeviceStatus.OFF
+
+
 class MicrowaveSettings:
     MAX_DEGREES = 30
     MIN_DEGREES = 20
@@ -14,5 +21,6 @@ class AirConditionerSettings:
 
 class TVSettings:
     MIN_CHANNEL = 0
+    MAX_CHANNEL = 10000
     DEFAULT_CHANNEL = 0
 
