@@ -10,6 +10,8 @@ if None in db_config.values():
     raise ValueError(f"Environment variables {','.join([repr(env_var) for env_var in db_config if not db_config[env_var]])} " \
           f"not properly set.")
 
+env = os.environ.get("PYTHON_ENV", "prod")
+
 database_uri = f"postgresql://" \
                     f"{db_config['POSTGRES_USER']}:{db_config['POSTGRES_PASSWORD']}" \
                     f"@{db_config['POSTGRES_HOST']}:{db_config['POSTGRES_PORT']}/{db_config['POSTGRES_DB']}"
