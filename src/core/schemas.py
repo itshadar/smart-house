@@ -1,6 +1,6 @@
 from pydantic import Field, BaseModel
-from typing import Optional, NamedTuple
-from app.core.utilities import AirConditionerSettings, MicrowaveSettings, TVSettings, DeviceStatus, DeviceType
+from typing import NamedTuple
+from src.core.utilities import DeviceStatus, DeviceType, MicrowaveSettings, AirConditionerSettings, TVSettings
 
 
 class DeviceMetadata(NamedTuple):
@@ -10,26 +10,27 @@ class DeviceMetadata(NamedTuple):
     id: int
 
 
-class ElectronicDeviceCreate(BaseModel):
-
+class ElectronicDeviceDomain(BaseModel):
+    id: int
     name: str
-    location: Optional[str]
-    status: Optional[DeviceStatus]
-    type: DeviceType
+    location: str
+    status: DeviceStatus
+    device_type: DeviceType
+
+    class Config:
+        orm_mode = True
 
 
-class AirConditionerCreate(ElectronicDeviceCreate):
-    degrees: int = Field(ge=AirConditionerSettings.MIN_DEGREES, le=AirConditionerSettings.MAX_DEGREES,
-                         default=AirConditionerSettings.DEFAULT_DEGREES)
-
-
-class MicrowaveCreate(ElectronicDeviceCreate):
+class MicrowaveDomain(ElectronicDeviceDomain):
     degrees: int = Field(ge=MicrowaveSettings.MIN_DEGREES, le=MicrowaveSettings.MAX_DEGREES, default=MicrowaveSettings.DEFAULT_DEGREES)
     timer: int = Field(ge=MicrowaveSettings.MIN_TIMER, default=MicrowaveSettings.DEFAULT_TIMER)
 
 
-class TVCreate(ElectronicDeviceCreate):
+class AirConditionerDomain(ElectronicDeviceDomain):
+    degrees: int = Field(ge=AirConditionerSettings.MIN_DEGREES, le=AirConditionerSettings.MAX_DEGREES,
+                         default=AirConditionerSettings.DEFAULT_DEGREES)
+
+
+class TVDomain(ElectronicDeviceDomain):
     channel: int = Field(ge=TVSettings.MIN_CHANNEL, default=TVSettings.DEFAULT_CHANNEL)
-
-
 
