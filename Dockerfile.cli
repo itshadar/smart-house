@@ -5,9 +5,9 @@ WORKDIR /app
 COPY ./Pipfile ./
 COPY ./config.py ./
 COPY ./db_scripts ./db_scripts
-COPY ./app/cli ./app/cli
-COPY ./app/core  ./app/core
-COPY ./app/__init__.py  ./app/
+COPY ./src/cli ./app/cli
+COPY ./src/core  ./app/core
+COPY ./src/__init__.py  ./app/
 COPY ./alembic.ini  ./
 
 
@@ -16,5 +16,5 @@ RUN pip install pipenv
 RUN pipenv install --deploy
 
 
-ENTRYPOINT ["pipenv", "run", "python", "-m", "app.cli"]
+ENTRYPOINT ["pipenv", "run", "python", "-m", "src.cli"]
 
