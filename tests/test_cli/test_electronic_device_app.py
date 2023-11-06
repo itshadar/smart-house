@@ -46,7 +46,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["set-status", "ON"])
         assert result.exit_code == 0
-        assert "ON" in result.output
+        assert "[INFO] Set Test status to ON" in result.output
 
     def test_set_status_validation_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()
@@ -58,7 +58,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, ["get-status"])
         assert result.exit_code == 0
-        assert "OFF" in result.output
+        assert "[INFO] Test status is OFF" in result.output
 
     def test_list_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()

@@ -47,7 +47,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["switch-channel", "4"])
         assert result.exit_code == 0
-        assert "4" in result.output
+        assert "[INFO] Set Test channel to 4" in result.output
 
     def test_switch_channel_validation_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()
@@ -65,7 +65,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, ["get-channel"])
         assert result.exit_code == 0
-        assert "2" in result.output
+        assert "[INFO] Test channel is 2" in result.output
 
     def test_list_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()

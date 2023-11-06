@@ -48,7 +48,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["set-degrees", "20"])
         assert result.exit_code == 0
-        assert "20" in result.output
+        assert "[INFO] Set Test degrees to 20" in result.output
 
     def test_set_degrees_validation_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()
@@ -70,7 +70,7 @@ class TestElectronicDeviceApp:
         runner = CliRunner()
         result = runner.invoke(test_device_app, ["get-degrees"])
         assert result.exit_code == 0
-        assert "15" in result.output
+        assert "[INFO] Test degrees is 15" in result.output
 
     def test_list_command(self, test_device_app: AsyncTyper):
         runner = CliRunner()
