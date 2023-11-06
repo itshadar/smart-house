@@ -1,5 +1,5 @@
-from app.core.utilities import DeviceType
 from abc import ABC, abstractmethod
+from src.core.utilities.enums import DeviceType
 from .base_command_set import BaseCommandSet
 from .electronic_device_command_set import ElectronicDeviceCommandSet
 from .microwave_command_set import MicrowaveCommandSet
@@ -37,9 +37,3 @@ class DeviceCommandSetFactory(CommandSetFactory):
     def setup(cls, device_type: DeviceType, app):
         device_command_set = cls.create(device_type, app)
         device_command_set.register_commands()
-
-
-
-
-
-

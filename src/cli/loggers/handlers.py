@@ -10,7 +10,7 @@ class TyperLoggerHandler(Handler):
 
 def get_typer_handler() -> Handler:
 
-    formatter = Formatter(f'[%(levelname)s] %(message)s')
+    formatter = Formatter('[%(levelname)s] %(message)s')
     handler = TyperLoggerHandler()
     handler.setFormatter(formatter)
     return handler

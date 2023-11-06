@@ -1,8 +1,7 @@
 from typer import Argument, Context
 from .electronic_device_command_set import ElectronicDeviceCommandSet
-from app.core.utilities import MicrowaveSettings
-from app.core.db_operations import get_async_uow
-from app.cli.loggers import logger
+from src.core.utilities.constants import MicrowaveSettings
+from src.cli.loggers import logger
 
 
 class MicrowaveCommandSet(ElectronicDeviceCommandSet):
@@ -27,4 +26,3 @@ class MicrowaveCommandSet(ElectronicDeviceCommandSet):
             async with ctx.obj.async_uow as uow:
                 degrees = await uow.microwaves.get_degrees(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "degrees", degrees)
-

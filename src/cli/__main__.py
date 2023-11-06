@@ -1,4 +1,4 @@
-from app.core.db_operations import get_async_uow, AsyncUnitOfWork
+from src.core.db_operations import get_async_uow, AsyncUnitOfWork
 from .configure_apps import build_app
 
 

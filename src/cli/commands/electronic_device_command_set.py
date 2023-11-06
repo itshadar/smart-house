@@ -1,8 +1,8 @@
 from .base_command_set import BaseCommandSet
 from typer import Argument, Context
-from app.core.utilities import DeviceStatus
-from app.cli.loggers import logger
-from app.cli.utilities.async_typer import AsyncTyper
+from src.core.utilities.enums import DeviceStatus
+from src.cli.loggers import logger
+from src.cli.utilities.async_typer import AsyncTyper
 
 
 class ElectronicDeviceCommandSet(BaseCommandSet):

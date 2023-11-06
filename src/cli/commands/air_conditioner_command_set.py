@@ -1,8 +1,7 @@
 from typer import Argument, Context
 from .electronic_device_command_set import ElectronicDeviceCommandSet
-from app.core.utilities import AirConditionerSettings
-from app.core.db_operations import get_async_uow
-from app.cli.loggers import logger
+from src.core.utilities.constants import AirConditionerSettings
+from src.cli.loggers import logger
 
 
 class AirConditionerCommandSet(ElectronicDeviceCommandSet):

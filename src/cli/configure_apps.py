@@ -1,10 +1,10 @@
 import asyncio
 from typer import Context
-from .commands import DeviceCommandSetFactory
-from app.cli.utilities.async_typer import AsyncTyper
-from app.core.utilities import DeviceType
-from app.core.schemas import DeviceMetadata
-from app.core.db_operations import AsyncUnitOfWork
+from .commands.command_set_factory import DeviceCommandSetFactory
+from src.cli.utilities.async_typer import AsyncTyper
+from src.core.utilities.enums import DeviceType
+from src.core.schemas import DeviceMetadata
+from src.core.db_operations import AsyncUnitOfWork
 
 
 class ContextDeviceAppObj:
@@ -14,7 +14,8 @@ class ContextDeviceAppObj:
         self.device_name = device_name
 
 
-def build_device_app(device_name: str, device_id: int, device_type: DeviceType, async_uow: AsyncUnitOfWork) -> AsyncTyper:
+def build_device_app(device_name: str, device_id: int, device_type: DeviceType,
+                     async_uow: AsyncUnitOfWork) -> AsyncTyper:
 
     def configure_device_driver(ctx: Context):
         ctx.obj = ContextDeviceAppObj(async_uow=async_uow, device_id=device_id, device_name=device_name)
@@ -35,8 +36,13 @@ async def get_available_devices(async_uow: AsyncUnitOfWork) -> list[DeviceMetada
 
 
 def build_app(async_uow: AsyncUnitOfWork):
+
+    # I needed to make adaptions to support AsyncTyper and async commands within typer package and that why I used
+    # loop.run_until_complete, although it's not best practice (should run the event_loop from main).
+    # Click has extends library for async/await commands so maybe in the future I'll
+    # replace typer package with click package.
     devices = asyncio.get_event_loop().run_until_complete(get_available_devices(async_uow))
-    app = AsyncTyper(name="Smart House", help=f"Available Commands for Smart House App", no_args_is_help=True)
+    app = AsyncTyper(name="Smart House", help="Available Commands for Smart House App", no_args_is_help=True)
     for device in devices:
         device_app = build_device_app(device.name, device.id, device.type, async_uow)
         app.add_typer(device_app, name=device.name)

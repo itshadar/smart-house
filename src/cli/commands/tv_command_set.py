@@ -1,8 +1,7 @@
 from typer import Argument, Context
 from .electronic_device_command_set import ElectronicDeviceCommandSet
-from app.core.utilities import TVSettings
-from app.core.db_operations import get_async_uow
-from app.cli.loggers import logger
+from src.core.utilities.constants import TVSettings
+from src.cli.loggers import logger
 
 
 class TVCommandSet(ElectronicDeviceCommandSet):
