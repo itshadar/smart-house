@@ -12,7 +12,6 @@ migrate = "alembic upgrade head"
 [packages]
 requests = "*"
 pydantic = "*"
-sqlalchemy = "*"
 psycopg2 = "*"
 alembic = "*"
 python-decouple = "*"
@@ -20,14 +19,22 @@ python-dotenv = "*"
 typer = {extras = ["all"], version = "*"}
 anyio = "*"
 asyncpg = "*"
+mypy = "*"
+sqlalchemy = {extras = ["mypy"], version = "*"}
+
 
 [dev-packages]
 pytest = "*"
 pytest-asyncio = "*"
-aiosqlite = "*"
 pytest-mock-resources = "*"
 python-on-whales = "*"
+flake8 = "*"
+black = "*"
+isort = "*"
+flake8-builtins = "*"
+flake8-simplify = "*"
+flake8-comprehensions = "*"
+
 
 [requires]
 python_version = "3.10"
-#python_full_version = "3.10.11"
