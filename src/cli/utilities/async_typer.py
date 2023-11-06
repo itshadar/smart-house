@@ -1,6 +1,7 @@
-import inspect
-from functools import wraps, partial
 import asyncio
+import inspect
+from functools import partial, wraps
+
 from typer import Typer
 
 

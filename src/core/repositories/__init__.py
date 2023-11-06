@@ -1,4 +1,0 @@
-from .tv_repository import TVSQLRepository
-from .electronic_device_repository import ElectronicDeviceSQLRepository
-from .microwave_repository import MicrowaveSQLRepository
-from .air_conditioner_repository import AirConditionerSQLRepository

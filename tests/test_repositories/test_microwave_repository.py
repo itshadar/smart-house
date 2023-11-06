@@ -1,9 +1,10 @@
 import pytest
-from sqlalchemy.sql import select
-from app.core.models import Microwave
-from app.core.utilities import DeviceStatus, DeviceType
-from app.core.repositories import MicrowaveSQLRepository
 from pytest_mock_resources import create_postgres_fixture
+from sqlalchemy.sql import select
+
+from src.core.models import Microwave
+from src.core.repositories.microwave_repository import MicrowaveSQLRepository
+from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
 @pytest.fixture(scope='function')

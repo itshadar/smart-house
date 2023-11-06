@@ -1,14 +1,16 @@
 from abc import ABC, abstractmethod
+
+from src.cli.commands.air_conditioner_command_set import \
+    AirConditionerCommandSet
+from src.cli.commands.base_command_set import BaseCommandSet
+from src.cli.commands.electronic_device_command_set import \
+    ElectronicDeviceCommandSet
+from src.cli.commands.microwave_command_set import MicrowaveCommandSet
+from src.cli.commands.tv_command_set import TVCommandSet
 from src.core.utilities.enums import DeviceType
-from .base_command_set import BaseCommandSet
-from .electronic_device_command_set import ElectronicDeviceCommandSet
-from .microwave_command_set import MicrowaveCommandSet
-from .tv_command_set import TVCommandSet
-from .air_conditioner_command_set import AirConditionerCommandSet
 
 
 class CommandSetFactory(ABC):
-
     @classmethod
     @abstractmethod
     def create(cls, *args, **kwargs) -> BaseCommandSet:
@@ -21,16 +23,17 @@ class CommandSetFactory(ABC):
 
 
 class DeviceCommandSetFactory(CommandSetFactory):
-
     COMMAND_SETS = {
         DeviceType.TV: TVCommandSet,
         DeviceType.MICROWAVE: MicrowaveCommandSet,
-        DeviceType.AIRCONDITIONER: AirConditionerCommandSet
+        DeviceType.AIRCONDITIONER: AirConditionerCommandSet,
     }
 
     @classmethod
     def create(cls, device_type: DeviceType, app) -> ElectronicDeviceCommandSet:
-        command_set_class = cls.COMMAND_SETS.get(device_type, ElectronicDeviceCommandSet)
+        command_set_class = cls.COMMAND_SETS.get(
+            device_type, ElectronicDeviceCommandSet
+        )
         return command_set_class(app)
 
     @classmethod

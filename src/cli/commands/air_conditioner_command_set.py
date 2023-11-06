@@ -1,20 +1,25 @@
 from typer import Argument, Context
-from .electronic_device_command_set import ElectronicDeviceCommandSet
-from src.core.utilities.constants import AirConditionerSettings
+
+from src.cli.commands.electronic_device_command_set import \
+    ElectronicDeviceCommandSet
 from src.cli.loggers import logger
+from src.core.utilities.constants import AirConditionerSettings
 
 
 class AirConditionerCommandSet(ElectronicDeviceCommandSet):
-
     def commands(self):
         super().commands()
 
         @self.app.command()
-        async def set_degrees(ctx: Context,
-                              degrees: int = Argument(...,
-                                                      help="degrees value",
-                                                      min=AirConditionerSettings.MIN_DEGREES,
-                                                      max=AirConditionerSettings.MAX_DEGREES)):
+        async def set_degrees(
+            ctx: Context,
+            degrees: int = Argument(
+                ...,
+                help="degrees value",
+                min=AirConditionerSettings.MIN_DEGREES,
+                max=AirConditionerSettings.MAX_DEGREES,
+            ),
+        ):
             async with ctx.obj.async_uow as uow:
                 await uow.air_conditioners.set_degrees(ctx.obj.device_id, degrees)
             logger.set_log(ctx.obj.device_name, "degrees", degrees)

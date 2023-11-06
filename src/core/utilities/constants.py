@@ -1,4 +1,4 @@
-from .enums import DeviceStatus, DeviceType
+from src.core.utilities.enums import DeviceStatus
 
 
 class ElectronicDeviceSettings:
@@ -23,4 +23,3 @@ class TVSettings:
     MIN_CHANNEL = 0
     MAX_CHANNEL = 10000
     DEFAULT_CHANNEL = 0
-

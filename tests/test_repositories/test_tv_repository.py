@@ -1,9 +1,10 @@
 import pytest
-from sqlalchemy.sql import select
-from app.core.models import TV
-from app.core.utilities import DeviceStatus, DeviceType
-from app.core.repositories import TVSQLRepository
 from pytest_mock_resources import create_postgres_fixture
+from sqlalchemy.sql import select
+
+from src.core.models import TV
+from src.core.repositories.tv_repository import TVSQLRepository
+from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
 @pytest.fixture(scope='function')
@@ -35,7 +36,7 @@ class TestTVSQLRepository:
         repo = TVSQLRepository(pg_session)
         await repo.set_channel(device_id=1, channel=3)
 
-        result = await pg_session.execute(select(TV).filter_by(id=1))
+        result = await pg_session.execute(select(TV).where(TV.id == 1))
         updated_device = result.scalar()
         excepted_channel = 3
         assert updated_device.channel == excepted_channel

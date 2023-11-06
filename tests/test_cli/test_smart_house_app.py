@@ -1,14 +1,17 @@
 import asyncio
-import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Callable
-from typer.testing import CliRunner
-from app.cli.configure_apps import build_app
-from app.cli.utilities.async_typer import AsyncTyper
-from app.core.utilities import DeviceType
-from app.core.db_operations import AsyncUnitOfWork
-from app.core.models import Base, ElectronicDevice, Microwave, TV, AirConditioner
+
+import pytest
 from pytest_mock_resources import create_postgres_fixture
+from sqlalchemy.ext.asyncio import AsyncSession
+from typer.testing import CliRunner
+
+from src.cli.configure_apps import build_app
+from src.cli.utilities.async_typer import AsyncTyper
+from src.core.db_operations import AsyncUnitOfWork
+from src.core.models import (TV, AirConditioner, Base, ElectronicDevice,
+                             Microwave)
+from src.core.utilities.enums import DeviceType
 
 async_pg_session = create_postgres_fixture(Base, session=True, async_=True)
 
@@ -56,4 +59,3 @@ class TestElectronicDeviceApp:
         assert "Test Microwave2" in result.output
         assert "Test TV" in result.output
         assert "Test AC" in result.output
-

@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class IRepository(ABC):
-
     @abstractmethod
     def list_all(self):
         raise NotImplementedError

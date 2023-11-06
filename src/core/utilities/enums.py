@@ -11,4 +11,3 @@ class DeviceType(Enum):
     MICROWAVE = "microwave"
     AIRCONDITIONER = "airconditioner"
     OTHER = "other"
-

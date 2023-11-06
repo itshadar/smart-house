@@ -1,18 +1,23 @@
-from app.core.repositories import ElectronicDeviceSQLRepository, MicrowaveSQLRepository, TVSQLRepository, AirConditionerSQLRepository
 from abc import ABC, abstractmethod
-from typing import Callable, Union
-from sqlalchemy.orm import Session
+from typing import Callable
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from .session import get_session, get_async_session
+
+from src.core.repositories.air_conditioner_repository import \
+    AirConditionerSQLRepository
+from src.core.repositories.electronic_device_repository import \
+    ElectronicDeviceSQLRepository
+from src.core.repositories.microwave_repository import MicrowaveSQLRepository
+from src.core.repositories.tv_repository import TVSQLRepository
+
+from .session import get_async_session
 
 
 class UnitOfWorkBase(ABC):
-
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-
         if exc_type:
             self.rollback()
             raise exc_val
@@ -36,7 +41,7 @@ class UnitOfWorkBase(ABC):
 class AsyncUnitOfWork(UnitOfWorkBase):
     def __init__(self, session_factory: Callable[[], AsyncSession]) -> None:
         self._session_factory = session_factory
-        self._session: AsyncSession = None
+        self._session: AsyncSession | None = None
         self.electronic_devices = None
         self.tvs = None
         self.microwaves = None
@@ -71,4 +76,3 @@ class AsyncUnitOfWork(UnitOfWorkBase):
 
 def get_async_uow():
     return AsyncUnitOfWork(get_async_session)
-

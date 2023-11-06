@@ -1,27 +1,28 @@
 from abc import ABC, abstractmethod
+
 from src.core.models import ElectronicDevice
+from src.core.repositories.sql_repository import SQLRepository
 from src.core.schemas import DeviceMetadata
-from .sql_repository import SQLRepository
-from src.core.utilities import DeviceStatus
+from src.core.utilities.constants import DeviceStatus
 
 
 class ElectronicDeviceBaseRepository(ABC):
-
     @abstractmethod
-    def get_devices_metadata(self, **filters) -> list[DeviceMetadata]:
+    async def get_devices_metadata(self, **filters) -> list[DeviceMetadata]:
         raise NotImplementedError()
 
     @abstractmethod
-    def get_status(self, device_id: int) -> DeviceStatus | None:
+    async def get_status(self, device_id: int) -> DeviceStatus | None:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_status(self, device_id: int, status: DeviceStatus) -> None:
+    async def set_status(self, device_id: int, status: DeviceStatus) -> None:
         raise NotImplementedError()
 
 
-class ElectronicDeviceSQLRepository(ElectronicDeviceBaseRepository, SQLRepository[ElectronicDevice]):
-
+class ElectronicDeviceSQLRepository(
+    ElectronicDeviceBaseRepository, SQLRepository[ElectronicDevice]
+):
     _model = ElectronicDevice
 
     def __init__(self, session):
@@ -32,12 +33,12 @@ class ElectronicDeviceSQLRepository(ElectronicDeviceBaseRepository, SQLRepositor
         devices_metadata = await self.get_all(statement)
         return [DeviceMetadata(*device) for device in devices_metadata]
 
-    async def get_status(self, device_id: int) -> DeviceStatus | None:
+    async def get_status(self, device_id: int) -> DeviceStatus:
         statement = self._build_statement("status", id=device_id)
         return await self.get_scalar(statement)
 
     async def set_status(self, device_id: int, status: DeviceStatus) -> None:
         device = await self.get_by_id(device_id)
         if device is not None:
-            device.status = status
+            setattr(device, "status", status)
             await self.update(device)

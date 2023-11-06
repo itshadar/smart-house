@@ -1,10 +1,11 @@
 import pytest
-from sqlalchemy.sql import select
-from app.core.models import ElectronicDevice
-from app.core.schemas import DeviceMetadata
-from app.core.utilities import DeviceStatus, DeviceType
-from app.core.repositories import ElectronicDeviceSQLRepository
 from pytest_mock_resources import create_postgres_fixture
+from sqlalchemy.sql import select
+
+from src.core.models import ElectronicDevice
+from src.core.repositories.electronic_device_repository import \
+    ElectronicDeviceSQLRepository
+from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
 @pytest.fixture(scope='function')
@@ -23,7 +24,7 @@ class TestElectronicDeviceSQLRepository:
         await pg_session.commit()
 
         repo = ElectronicDeviceSQLRepository(pg_session)
-        # TODO: DEAL WITH THIS FUNCTION TO RETURN METADATA
+
         devices_metadata = await repo.get_devices_metadata()
         assert len(devices_metadata) == 1
         assert devices_metadata[0].name == "Test Device"

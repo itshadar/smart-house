@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from config import database_uri, async_database_uri, env
+from sqlalchemy.orm import Session
+
+from src.config import async_database_uri, database_uri, env
 
 engine = create_engine(database_uri)
 async_engine = create_async_engine(async_database_uri)

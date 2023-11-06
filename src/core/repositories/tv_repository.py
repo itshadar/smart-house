@@ -1,21 +1,21 @@
 from abc import ABC, abstractmethod
+
 from src.core.models import TV
-from .electronic_device_repository import ElectronicDeviceSQLRepository, ElectronicDeviceBaseRepository
+from src.core.repositories.electronic_device_repository import (
+    ElectronicDeviceBaseRepository, ElectronicDeviceSQLRepository)
 
 
 class TVBaseRepository(ElectronicDeviceBaseRepository, ABC):
-
     @abstractmethod
-    def get_channel(self, device_id: int) -> int | None:
+    async def get_channel(self, device_id: int) -> int | None:
         raise NotImplementedError()
 
     @abstractmethod
-    def set_channel(self, device_id: int, channel: int) -> None:
+    async def set_channel(self, device_id: int, channel: int) -> None:
         raise NotImplementedError()
 
 
 class TVSQLRepository(TVBaseRepository, ElectronicDeviceSQLRepository):
-
     _model = TV
 
     async def get_channel(self, device_id: int) -> int | None:
@@ -25,5 +25,5 @@ class TVSQLRepository(TVBaseRepository, ElectronicDeviceSQLRepository):
     async def set_channel(self, device_id: int, channel: int) -> None:
         tv = await self.get_by_id(device_id)
         if tv:
-            tv.channel = channel
+            setattr(tv, "channel", channel)
             await self.update(tv)
