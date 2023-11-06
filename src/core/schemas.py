@@ -20,7 +20,7 @@ class ElectronicDeviceDomain(BaseModel):
     status: DeviceStatus
     device_type: DeviceType
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
