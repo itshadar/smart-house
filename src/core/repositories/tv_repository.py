@@ -19,11 +19,9 @@ class TVSQLRepository(TVBaseRepository, ElectronicDeviceSQLRepository):
     _model = TV
 
     async def get_channel(self, device_id: int) -> int | None:
-        statement = self._build_statement("channel", id=device_id)
-        return await self.get_scalar(statement)
+        return await self.get_col_by_id(col_name="channel", id=device_id)
 
     async def set_channel(self, device_id: int, channel: int) -> None:
         tv = await self.get_by_id(device_id)
-        if tv:
-            setattr(tv, "channel", channel)
-            await self.update(tv)
+        setattr(tv, "channel", channel)
+        await self.update(tv)

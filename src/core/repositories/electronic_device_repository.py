@@ -34,11 +34,9 @@ class ElectronicDeviceSQLRepository(
         return [DeviceMetadata(*device) for device in devices_metadata]
 
     async def get_status(self, device_id: int) -> DeviceStatus:
-        statement = self._build_statement("status", id=device_id)
-        return await self.get_scalar(statement)
+        return await self.get_col_by_id(col_name="status", id=device_id)
 
     async def set_status(self, device_id: int, status: DeviceStatus) -> None:
         device = await self.get_by_id(device_id)
-        if device is not None:
-            setattr(device, "status", status)
-            await self.update(device)
+        setattr(device, "status", status)
+        await self.update(device)

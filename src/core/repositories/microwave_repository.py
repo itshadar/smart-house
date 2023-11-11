@@ -21,14 +21,10 @@ class MicrowaveSQLRepository(MicrowaveBaseRepository, ElectronicDeviceSQLReposit
     _model = Microwave
 
     async def get_degrees(self, device_id: int) -> int | None:
-        statement = self._build_statement("degrees", id=device_id)
-        return await self.get_scalar(statement)
+        return await self.get_col_by_id(col_name="degrees", id=device_id)
 
-    async def set_degrees_and_timer(
-            self, device_id: int, degrees: int, timer: int
-    ) -> None:
+    async def set_degrees_and_timer(self, device_id: int, degrees: int, timer: int) -> None:
         microwave = await self.get_by_id(device_id)
-        if microwave:
-            setattr(microwave, "degrees", degrees)
-            setattr(microwave, "timer", timer)
-            await self.update(microwave)
+        setattr(microwave, "degrees", degrees)
+        setattr(microwave, "timer", timer)
+        await self.update(microwave)

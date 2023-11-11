@@ -1,10 +1,13 @@
 from typing import Any, Generic, Type, TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import ProgrammingError
+
 from sqlalchemy.sql import Select, and_, select
 
 from src.core.models import Base
 from src.core.repositories.base_repository import IRepository
+from src.core.exceptions import RecordNotFoundException
 
 TModel = TypeVar("TModel", bound=Base)
 
@@ -52,7 +55,19 @@ class SQLRepository(IRepository, Generic[TModel]):
 
     async def get_by_id(self, id: int) -> TModel | None:
         statement = self._build_statement(id=id)
-        return await self.get_scalar(statement)
+        record: TModel | None = await self.get_scalar(statement)
+        if not record:
+            raise RecordNotFoundException(f"{self._model.__name__} with ID {id} not found.")
+        else:
+            return record
+
+    async def get_col_by_id(self, col_name: str, id: int) -> any:
+        statement = self._build_statement(col_name, id=id)
+        col_value = await self.get_scalar(statement)
+        if not col_value:
+            raise RecordNotFoundException(f"{self._model.__name__} with ID {id} not found.")
+        else:
+            return col_value
 
     async def list_all(self) -> list[TModel]:
         statement = self._build_statement()
@@ -65,7 +80,7 @@ class SQLRepository(IRepository, Generic[TModel]):
 
     async def get_scalar(self, statement: Select) -> Any:
         result = await self._session.execute(statement)
-        return result.scalars().one_or_none()
+        return result.scalar_one_or_none()
 
     async def add(self, record: TModel) -> TModel:
         self._session.add(record)

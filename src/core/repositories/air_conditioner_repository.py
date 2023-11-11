@@ -21,11 +21,9 @@ class AirConditionerSQLRepository(
     _model = AirConditioner
 
     async def get_degrees(self, device_id: int) -> int | None:
-        statement = self._build_statement("degrees", id=device_id)
-        return await self.get_scalar(statement)
+        return await self.get_col_by_id(col_name="degrees", id=device_id)
 
     async def set_degrees(self, device_id: int, degrees: int):
         ac = await self.get_by_id(device_id)
-        if ac:
-            setattr(ac, "degrees", degrees)
-            await self.update(ac)
+        setattr(ac, "degrees", degrees)
+        await self.update(ac)
