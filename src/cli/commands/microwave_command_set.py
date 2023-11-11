@@ -22,8 +22,8 @@ class MicrowaveCommandSet(ElectronicDeviceCommandSet):
                 help="timer value in seconds", min=MicrowaveSettings.MIN_TIMER
             ),
         ):
-            async with ctx.obj.async_uow:
-                await ctx.obj.repo.set_degrees_and_timer(
+            async with ctx.obj.async_uow as uow:
+                await uow.microwaves.set_degrees_and_timer(
                     ctx.obj.device_id, degrees, timer
                 )
             logger.set_log(ctx.obj.device_name, "degrees", degrees)
@@ -31,6 +31,6 @@ class MicrowaveCommandSet(ElectronicDeviceCommandSet):
 
         @self.app.command()
         async def get_degrees(ctx: Context):
-            async with ctx.obj.async_uow:
-                degrees = await ctx.obj.repo.get_degrees(ctx.obj.device_id)
+            async with ctx.obj.async_uow as uow:
+                degrees = await uow.microwaves.get_degrees(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "degrees", degrees)

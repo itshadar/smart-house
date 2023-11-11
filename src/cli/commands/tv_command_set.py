@@ -20,12 +20,12 @@ class TVCommandSet(ElectronicDeviceCommandSet):
                 max=TVSettings.MAX_CHANNEL,
             ),
         ):
-            async with ctx.obj.async_uow:
-                await ctx.obj.repo.set_channel(ctx.obj.device_id, channel)
+            async with ctx.obj.async_uow as uow:
+                await uow.tvs.set_channel(ctx.obj.device_id, channel)
             logger.set_log(ctx.obj.device_name, "channel", channel)
 
         @self.app.command()
         async def get_channel(ctx: Context):
-            async with ctx.obj.async_uow:
-                channel = await ctx.obj.repo.get_channel(ctx.obj.device_id)
+            async with ctx.obj.async_uow as uow:
+                channel = await uow.tvs.get_channel(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "channel", channel)
