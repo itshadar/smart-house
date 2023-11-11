@@ -20,12 +20,12 @@ class AirConditionerCommandSet(ElectronicDeviceCommandSet):
                 max=AirConditionerSettings.MAX_DEGREES,
             ),
         ):
-            async with ctx.obj.async_uow as uow:
-                await uow.air_conditioners.set_degrees(ctx.obj.device_id, degrees)
+            async with ctx.obj.async_uow:
+                await ctx.obj.repo.set_degrees(ctx.obj.device_id, degrees)
             logger.set_log(ctx.obj.device_name, "degrees", degrees)
 
         @self.app.command()
         async def get_degrees(ctx: Context):
-            async with ctx.obj.async_uow as uow:
-                degrees = await uow.air_conditioners.get_degrees(ctx.obj.device_id)
+            async with ctx.obj.async_uow:
+                degrees = await ctx.obj.repo.get_degrees(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "degrees", degrees)

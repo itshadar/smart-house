@@ -4,16 +4,28 @@ from typer import Context
 
 from src.cli.commands.command_set_factory import DeviceCommandSetFactory
 from src.cli.utilities.async_typer import AsyncTyper
-from src.core.db_operations import AsyncUnitOfWork
+from src.core.db_operations import AsyncUnitOfWork, get_async_uow
 from src.core.schemas import DeviceMetadata
 from src.core.utilities.enums import DeviceType
 
 
 class ContextDeviceAppObj:
-    def __init__(self, async_uow: AsyncUnitOfWork, device_id, device_name):
+    def __init__(self, async_uow, device_id: int, device_name: str, device_type: DeviceType):
         self.async_uow = async_uow
         self.device_id = device_id
         self.device_name = device_name
+        self.device_type = device_type
+
+    @property
+    def repo(self):
+        if self.device_type == DeviceType.MICROWAVE:
+            return self.async_uow.microwaves
+        elif self.device_type == DeviceType.TV:
+            return self.async_uow.tvs
+        elif self.device_type == DeviceType.AIRCONDITIONER:
+            return self.async_uow.air_conditioners
+        else:
+            return self.async_uow.electronic_devices
 
 
 def build_device_app(
@@ -24,7 +36,7 @@ def build_device_app(
 ) -> AsyncTyper:
     def configure_device_driver(ctx: Context):
         ctx.obj = ContextDeviceAppObj(
-            async_uow=async_uow, device_id=device_id, device_name=device_name
+            async_uow=async_uow, device_id=device_id, device_name=device_name, device_type=device_type
         )
 
     device_app = AsyncTyper(
