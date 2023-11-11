@@ -21,7 +21,9 @@ anyio = "*"
 asyncpg = "*"
 mypy = "*"
 sqlalchemy = {extras = ["mypy"], version = "*"}
-
+fastapi = "*"
+uvicorn = "*"
+slowapi = "*"
 
 [dev-packages]
 pytest = "*"
@@ -34,7 +36,6 @@ isort = "*"
 flake8-builtins = "*"
 flake8-simplify = "*"
 flake8-comprehensions = "*"
-
 
 [requires]
 python_version = "3.10"

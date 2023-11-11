@@ -56,12 +56,13 @@ class AsyncUnitOfWork(UnitOfWorkBase):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if exc_type:
-            await self.rollback()
-            raise exc_val
-        else:
-            await self.commit()
-        await self.close()
+        try:
+            if exc_type:
+                await self.rollback()
+            else:
+                await self.commit()
+        finally:
+            await self.close()
 
     async def commit(self):
         await self._session.commit()

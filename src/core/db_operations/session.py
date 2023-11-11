@@ -18,4 +18,4 @@ def get_session() -> Session:
 
 
 def get_async_session() -> AsyncSession:
-    return AsyncSession(bind=async_engine)
+    return AsyncSession(bind=async_engine, expire_on_commit=False)
