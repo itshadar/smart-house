@@ -55,10 +55,11 @@ async def get_available_devices(async_uow: AsyncUnitOfWork) -> list[DeviceMetada
 
 
 def build_app(async_uow: AsyncUnitOfWork):
-    # I needed to make adaptions to support AsyncTyper and async commands within typer package and that why I used
-    # loop.run_until_complete, although it's not best practice (should run the event_loop from main).
-    # Click has extensions for async/await commands so maybe in the future I'll
-    # replace typer package with click package.
+    # Adaptations were made to support AsyncTyper and asynchronous commands within the Typer package.
+    # This required using loop.run_until_complete, though ideally, the event loop should be run from main.
+    # Reference: https://github.com/tiangolo/typer/issues/88
+    # Future Consideration: Transitioning to the Click package, which natively supports async/await, might be explored.
+
     devices = asyncio.get_event_loop().run_until_complete(
         get_available_devices(async_uow)
     )
