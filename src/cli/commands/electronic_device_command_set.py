@@ -13,16 +13,12 @@ class ElectronicDeviceCommandSet(BaseCommandSet):
     def commands(self):
         @self.app.command()
         async def get_status(ctx: Context):
-            async with ctx.obj.async_uow as uow:
-                status: DeviceStatus = await uow.electronic_devices.get_status(
-                    ctx.obj.device_id
-                )
+            async with ctx.obj.async_uow:
+                status: DeviceStatus = await ctx.obj.repo.get_status(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "status", status.name)
 
         @self.app.command()
-        async def set_status(
-            ctx: Context, status: DeviceStatus = Argument(default="OFF")
-        ):
-            async with ctx.obj.async_uow as uow:
-                await uow.electronic_devices.set_status(ctx.obj.device_id, status)
+        async def set_status(ctx: Context, status: DeviceStatus = Argument(default="OFF")):
+            async with ctx.obj.async_uow:
+                await ctx.obj.repo.set_status(ctx.obj.device_id, status)
             logger.set_log(ctx.obj.device_name, "status", status.name)
