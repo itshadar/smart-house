@@ -1,9 +1,9 @@
 import asyncio
 import inspect
 from functools import partial, wraps
+from typing import Any, Callable, TypeVar
 
 from typer import Typer
-from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 

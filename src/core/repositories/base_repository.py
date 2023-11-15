@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, Union, Coroutine, Any
+from typing import Any, Coroutine, Generic, Optional, TypeVar, Union
 
 T = TypeVar("T")
 S = TypeVar("S")
@@ -23,5 +23,5 @@ class IRepository(Generic[T, S], ABC):
         ...
 
     @abstractmethod
-    def delete(self, record_id: int) -> Union[None, Coroutine[Any, Any, None]]:
+    def delete(self, record_id: int) -> Optional[Coroutine[Any, Any, None]]:
         ...

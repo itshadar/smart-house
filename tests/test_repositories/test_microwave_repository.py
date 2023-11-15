@@ -1,5 +1,6 @@
-import pytest
 from typing import Type
+
+import pytest
 from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +9,7 @@ from src.core.repositories.microwave_repository import MicrowaveSQLRepository
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_device() -> Microwave:
     return Microwave(
         id=1,
@@ -24,7 +25,7 @@ pg_session = create_postgres_fixture(Microwave, session=True, async_=True)
 
 
 class TestTVSQLRepository:
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_degrees(
         self, test_device: Microwave, pg_session: AsyncSession
     ) -> None:
@@ -37,7 +38,7 @@ class TestTVSQLRepository:
 
         assert actual_degrees == excepted_degrees
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_set_degrees_and_timer(
         self, test_device: Microwave, pg_session: AsyncSession
     ) -> None:

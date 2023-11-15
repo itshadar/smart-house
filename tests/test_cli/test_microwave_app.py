@@ -5,12 +5,12 @@ from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 from typer.testing import CliRunner
 
-from tests.test_cli.utilities import create_session_factory, create_device_app
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
 from src.core.models import Microwave
 from src.core.utilities.constants import MicrowaveSettings
 from src.core.utilities.enums import DeviceType
+from tests.test_cli.utilities import create_device_app, create_session_factory
 
 async_pg_session = create_postgres_fixture(Microwave, session=True, async_=True)
 

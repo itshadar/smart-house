@@ -1,14 +1,12 @@
-from typing import Any, Type, TypeVar, Dict
-
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from sqlalchemy.sql import Select, and_, select
+from typing import Any, Type, TypeVar
 
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import Select, and_, select
 
+from src.core.exceptions import RecordNotFoundError
 from src.core.models import Base
 from src.core.repositories.base_repository import IRepository
-from src.core.exceptions import RecordNotFoundException
 
 TModel = TypeVar("TModel", bound=Base)
 TModelSchema = TypeVar("TModelSchema", bound=BaseModel)
@@ -60,7 +58,7 @@ class SQLRepository(IRepository[TModel, TModelSchema]):
         statement = self._build_statement(id=record_id)
         record: TModel | None = await self.get_scalar(statement)
         if not record:
-            raise RecordNotFoundException(
+            raise RecordNotFoundError(
                 f"{self._model.__name__} with ID {record_id} not found."
             )
         else:
@@ -70,7 +68,7 @@ class SQLRepository(IRepository[TModel, TModelSchema]):
         statement = self._build_statement(col_name, id=record_id)
         col_value = await self.get_scalar(statement)
         if not col_value:
-            raise RecordNotFoundException(
+            raise RecordNotFoundError(
                 f"{self._model.__name__} with ID {record_id} not found."
             )
         else:

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, AnyStr, TypeVar
+from typing import AnyStr, Dict, TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.core.models import ElectronicDevice
 from src.core.repositories.sql_repository import SQLRepository
 from src.core.schemas import DeviceMetadata, ElectronicDeviceSchema

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Path, Body
-from src.core.db_operations.unit_of_work import get_async_uow, AsyncUnitOfWork
+from fastapi import APIRouter, Body, Depends, Path
+
+from src.api.schemas import SetDeviceStatusRequest
+from src.core.db_operations.unit_of_work import AsyncUnitOfWork, get_async_uow
 from src.core.schemas import DeviceMetadata
 from src.core.utilities.enums import DeviceStatus
-from src.api.schemas import SetDeviceStatusRequest
-
 
 router = APIRouter()
 

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
-from src.core.utilities.enums import DeviceStatus
+
 from src.core.utilities.constants import MicrowaveSettings
+from src.core.utilities.enums import DeviceStatus
 
 
 class SetDeviceStatusRequest(BaseModel):

@@ -5,21 +5,21 @@ from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 from typer.testing import CliRunner
 
-from tests.test_cli.utilities import create_session_factory, create_device_app
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
 from src.core.models import ElectronicDevice
-from src.core.utilities.enums import DeviceStatus, DeviceType
+from src.core.utilities.enums import DeviceStatus
+from tests.test_cli.utilities import create_device_app, create_session_factory
 
 async_pg_session = create_postgres_fixture(ElectronicDevice, session=True, async_=True)
 
 
-@pytest.fixture
+@pytest.fixture()
 def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncSession]:
     return create_session_factory(async_pg_session)
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_async_uow(
     async_session_factory: Callable[[], AsyncSession]
 ) -> AsyncUnitOfWork:

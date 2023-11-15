@@ -1,12 +1,13 @@
 import asyncio
-
 from typing import Callable
+
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.cli.configure_apps import build_device_app
+from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
 from src.core.models import ElectronicDevice
 from src.core.utilities.enums import DeviceType
-from src.cli.utilities.async_typer import AsyncTyper
-from src.cli.configure_apps import build_device_app
 
 
 def create_session_factory(async_session: AsyncSession) -> Callable[[], AsyncSession]:
