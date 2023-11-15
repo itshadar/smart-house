@@ -7,8 +7,8 @@ from src.core.utilities.constants import MicrowaveSettings
 
 
 class MicrowaveCommandSet(ElectronicDeviceCommandSet):
-    def commands(self):
-        super().commands()
+    def register_commands(self) -> None:
+        super().register_commands()
 
         @self.app.command()
         async def set_degrees_and_timer(
@@ -21,7 +21,7 @@ class MicrowaveCommandSet(ElectronicDeviceCommandSet):
             timer: int = Argument(
                 help="timer value in seconds", min=MicrowaveSettings.MIN_TIMER
             ),
-        ):
+        ) -> None:
             async with ctx.obj.async_uow:
                 await ctx.obj.repo.set_degrees_and_timer(
                     ctx.obj.device_id, degrees, timer
@@ -30,7 +30,7 @@ class MicrowaveCommandSet(ElectronicDeviceCommandSet):
             logger.set_log(ctx.obj.device_name, "timer", timer)
 
         @self.app.command()
-        async def get_degrees(ctx: Context):
+        async def get_degrees(ctx: Context) -> None:
             async with ctx.obj.async_uow:
                 degrees = await ctx.obj.repo.get_degrees(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "degrees", degrees)

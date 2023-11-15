@@ -4,20 +4,21 @@ from typer import Context
 
 from src.cli.commands.command_set_factory import DeviceCommandSetFactory
 from src.cli.utilities.async_typer import AsyncTyper
-from src.core.db_operations import AsyncUnitOfWork, get_async_uow
+from src.core.db_operations import AsyncUnitOfWork
 from src.core.schemas import DeviceMetadata
+from src.core.repositories.electronic_device_repository import ElectronicDeviceBaseRepository
 from src.core.utilities.enums import DeviceType
 
 
 class ContextDeviceAppObj:
-    def __init__(self, async_uow, device_id: int, device_name: str, device_type: DeviceType):
+    def __init__(self, async_uow: AsyncUnitOfWork, device_id: int, device_name: str, device_type: DeviceType):
         self.async_uow = async_uow
         self.device_id = device_id
         self.device_name = device_name
         self.device_type = device_type
 
     @property
-    def repo(self):
+    def repo(self) -> ElectronicDeviceBaseRepository:
         if self.device_type == DeviceType.MICROWAVE:
             return self.async_uow.microwaves
         elif self.device_type == DeviceType.TV:
@@ -34,7 +35,7 @@ def build_device_app(
     device_type: DeviceType,
     async_uow: AsyncUnitOfWork,
 ) -> AsyncTyper:
-    def configure_device_driver(ctx: Context):
+    def configure_device_driver(ctx: Context) -> None:
         ctx.obj = ContextDeviceAppObj(
             async_uow=async_uow, device_id=device_id, device_name=device_name, device_type=device_type
         )
@@ -54,7 +55,7 @@ async def get_available_devices(async_uow: AsyncUnitOfWork) -> list[DeviceMetada
         return await uow.electronic_devices.get_devices_metadata()
 
 
-def build_app(async_uow: AsyncUnitOfWork):
+def build_app(async_uow: AsyncUnitOfWork) -> AsyncTyper:
     # Adaptations were made to support AsyncTyper and asynchronous commands within the Typer package.
     # This required using loop.run_until_complete, though ideally, the event loop should be run from main.
     # Reference: https://github.com/tiangolo/typer/issues/88

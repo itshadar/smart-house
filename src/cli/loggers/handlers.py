@@ -4,7 +4,7 @@ from typer import echo
 
 
 class TyperLoggerHandler(Handler):
-    def emit(self, record: LogRecord):
+    def emit(self, record: LogRecord) -> None:
         echo(self.format(record))
 
 

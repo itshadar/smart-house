@@ -1,5 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Any
+from typing_extensions import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,45 +9,23 @@ from src.core.repositories.electronic_device_repository import \
     ElectronicDeviceSQLRepository
 from src.core.repositories.microwave_repository import MicrowaveSQLRepository
 from src.core.repositories.tv_repository import TVSQLRepository
+from src.core.schemas import ElectronicDeviceSchema
+from src.core.models import ElectronicDevice
+
 
 from .session import get_async_session
 
 
-class UnitOfWorkBase(ABC):
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type:
-            self.rollback()
-            raise exc_val
-        else:
-            self.commit()
-        self.close()
-
-    @abstractmethod
-    def commit(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def rollback(self):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def close(self):
-        raise NotImplementedError()
-
-
-class AsyncUnitOfWork(UnitOfWorkBase):
+class AsyncUnitOfWork:
     def __init__(self, session_factory: Callable[[], AsyncSession]) -> None:
         self._session_factory = session_factory
-        self._session: AsyncSession | None = None
-        self.electronic_devices = None
-        self.tvs = None
-        self.microwaves = None
-        self.air_conditioners = None
+        self._session: AsyncSession
+        self.electronic_devices: ElectronicDeviceSQLRepository[ElectronicDevice, ElectronicDeviceSchema]
+        self.tvs: TVSQLRepository
+        self.microwaves: MicrowaveSQLRepository
+        self.air_conditioners: AirConditionerSQLRepository
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> Self:
         self._session = self._session_factory()
         self.electronic_devices = ElectronicDeviceSQLRepository(self._session)
         self.tvs = TVSQLRepository(self._session)
@@ -55,7 +33,7 @@ class AsyncUnitOfWork(UnitOfWorkBase):
         self.air_conditioners = AirConditionerSQLRepository(self._session)
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         try:
             if exc_type:
                 await self.rollback()
@@ -64,16 +42,15 @@ class AsyncUnitOfWork(UnitOfWorkBase):
         finally:
             await self.close()
 
-    async def commit(self):
+    async def commit(self) -> None:
         await self._session.commit()
 
-    async def rollback(self):
+    async def rollback(self) -> None:
         await self._session.rollback()
 
-    async def close(self):
+    async def close(self) -> None:
         await self._session.close()
-        self._session = None
 
 
-def get_async_uow():
+def get_async_uow() -> AsyncUnitOfWork:
     return AsyncUnitOfWork(get_async_session)

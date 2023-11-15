@@ -6,6 +6,7 @@ from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 from typer.testing import CliRunner
 
+from tests.test_cli.utilities import create_session_factory
 from src.cli.configure_apps import build_app
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
@@ -22,14 +23,8 @@ def app() -> AsyncTyper:
     return app
 
 
-def create_session_factory(async_session):
-    def session_factory():
-        return async_session
-    return session_factory
-
-
 @pytest.fixture()
-def async_session_factory(async_pg_session) -> Callable[[], AsyncSession]:
+def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncSession]:
     return create_session_factory(async_pg_session)
 
 
@@ -40,7 +35,7 @@ def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUn
 
 class TestElectronicDeviceApp:
 
-    def test_list_command(self, mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession):
+    def test_list_command(self, mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> None:
         async_pg_session.add_all(instances=[ElectronicDevice(id=1, name="Test Device"),
                                             Microwave(id=2, name="Test Microwave", type=DeviceType.MICROWAVE),
                                             Microwave(id=3, name="Test Microwave2", type=DeviceType.MICROWAVE),

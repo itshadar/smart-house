@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, Path, Body
 from src.core.db_operations.unit_of_work import get_async_uow, AsyncUnitOfWork
 from src.core.schemas import DeviceMetadata
 from src.core.utilities.enums import DeviceStatus
-from src.api.schemas import SetStatusRequest
+from src.api.schemas import SetDeviceStatusRequest
 
 
 router = APIRouter()
 
 
 @router.get("/devices", response_model=list[DeviceMetadata])
-async def list_devices(uow: AsyncUnitOfWork = Depends(get_async_uow)):
+async def list_devices(uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
     """
     List all devices in the system.
     """
@@ -18,7 +18,7 @@ async def list_devices(uow: AsyncUnitOfWork = Depends(get_async_uow)):
 
 
 @router.get("/devices/{device_id}/status", response_model=DeviceStatus)
-async def get_device_status(device_id: int = Path(..., description="The unique identifier of the device"), uow: AsyncUnitOfWork = Depends(get_async_uow)):
+async def get_device_status(device_id: int = Path(..., description="The unique identifier of the device"), uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
     """
     Get the status of a specific device.
     """
@@ -28,8 +28,8 @@ async def get_device_status(device_id: int = Path(..., description="The unique i
 
 @router.put("/devices/{device_id}/status", response_model=DeviceStatus)
 async def set_device_status(device_id: int = Path(..., description="The unique identifier of the device"),
-                            status: SetStatusRequest = Body(..., description="New status to set for the device"),
-                            uow: AsyncUnitOfWork = Depends(get_async_uow)):
+                            status: SetDeviceStatusRequest = Body(..., description="New status to set for the device"),
+                            uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
     """
     Set the status of a specific device.
     """

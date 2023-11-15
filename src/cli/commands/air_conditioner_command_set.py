@@ -7,8 +7,8 @@ from src.core.utilities.constants import AirConditionerSettings
 
 
 class AirConditionerCommandSet(ElectronicDeviceCommandSet):
-    def commands(self):
-        super().commands()
+    def register_commands(self) -> None:
+        super().register_commands()
 
         @self.app.command()
         async def set_degrees(
@@ -19,13 +19,13 @@ class AirConditionerCommandSet(ElectronicDeviceCommandSet):
                 min=AirConditionerSettings.MIN_DEGREES,
                 max=AirConditionerSettings.MAX_DEGREES,
             ),
-        ):
+        ) -> None:
             async with ctx.obj.async_uow:
                 await ctx.obj.repo.set_degrees(ctx.obj.device_id, degrees)
             logger.set_log(ctx.obj.device_name, "degrees", degrees)
 
         @self.app.command()
-        async def get_degrees(ctx: Context):
+        async def get_degrees(ctx: Context) -> None:
             async with ctx.obj.async_uow:
                 degrees = await ctx.obj.repo.get_degrees(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "degrees", degrees)

@@ -7,8 +7,8 @@ from src.core.utilities.constants import TVSettings
 
 
 class TVCommandSet(ElectronicDeviceCommandSet):
-    def commands(self):
-        super().commands()
+    def register_commands(self) -> None:
+        super().register_commands()
 
         @self.app.command()
         async def switch_channel(
@@ -19,13 +19,13 @@ class TVCommandSet(ElectronicDeviceCommandSet):
                 min=TVSettings.MIN_CHANNEL,
                 max=TVSettings.MAX_CHANNEL,
             ),
-        ):
+        ) -> None:
             async with ctx.obj.async_uow:
                 await ctx.obj.repo.set_channel(ctx.obj.device_id, channel)
             logger.set_log(ctx.obj.device_name, "channel", channel)
 
         @self.app.command()
-        async def get_channel(ctx: Context):
+        async def get_channel(ctx: Context) -> None:
             async with ctx.obj.async_uow:
                 channel = await ctx.obj.repo.get_channel(ctx.obj.device_id)
             logger.get_log(ctx.obj.device_name, "channel", channel)
