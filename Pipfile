@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-seed = "python -m db_scripts.scripts.seed_db"
-create = "python -m db_scripts.scripts.create_db"
-clean = "python -m db_scripts.scripts.clean_db"
+seed = "python -m src.db_scripts.scripts.seed_db"
+create = "python -m src.db_scripts.scripts.create_db"
+clean = "python -m src.db_scripts.scripts.clean_db"
 migrate = "alembic upgrade head"
 
 [packages]
@@ -16,7 +16,6 @@ psycopg2 = "*"
 alembic = "*"
 python-decouple = "*"
 python-dotenv = "*"
-typer = {extras = ["all"], version = "*"}
 anyio = "*"
 asyncpg = "*"
 mypy = "*"
@@ -36,6 +35,7 @@ mypy-extensions = "*"
 types-psycopg2 = "*"
 sqlalchemy-stubs = "*"
 isort = "*"
+typer = {extras = ["all"], version = "*"}
 
 [dev-packages]
 pytest = "*"
