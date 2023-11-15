@@ -35,6 +35,7 @@ pep8-naming = "*"
 mypy-extensions = "*"
 types-psycopg2 = "*"
 sqlalchemy-stubs = "*"
+isort = "*"
 
 [dev-packages]
 pytest = "*"
