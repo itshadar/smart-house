@@ -9,16 +9,17 @@ from src.core.repositories.tv_repository import TVSQLRepository
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def test_device() -> TV:
-    return TV(id=1, name="Test TV", status=DeviceStatus.OFF, channel=2, type=DeviceType.TV)
+    return TV(
+        id=1, name="Test TV", status=DeviceStatus.OFF, channel=2, type=DeviceType.TV
+    )
 
 
 pg_session = create_postgres_fixture(TV, session=True, async_=True)
 
 
 class TestTVSQLRepository:
-
     @pytest.mark.asyncio
     async def test_get_channel(self, test_device: TV, pg_session: AsyncSession) -> None:
         pg_session.add(test_device)

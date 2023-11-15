@@ -8,7 +8,9 @@ class SetDeviceStatusRequest(BaseModel):
 
 
 class SetMicrowaveControlsRequest(BaseModel):
-    degrees: int = Field(ge=MicrowaveSettings.MIN_DEGREES, le=MicrowaveSettings.MAX_DEGREES)
+    degrees: int = Field(
+        ge=MicrowaveSettings.MIN_DEGREES, le=MicrowaveSettings.MAX_DEGREES
+    )
     timer: int = Field(ge=MicrowaveSettings.MIN_TIMER)
 
 

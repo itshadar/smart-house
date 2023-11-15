@@ -21,44 +21,73 @@ def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncS
 
 
 @pytest.fixture()
-def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUnitOfWork:
+def mock_async_uow(
+    async_session_factory: Callable[[], AsyncSession]
+) -> AsyncUnitOfWork:
     return AsyncUnitOfWork(async_session_factory)
 
 
 @pytest.fixture()
-def test_device_app(mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> AsyncTyper:
+def test_device_app(
+    mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession
+) -> AsyncTyper:
     test_device = Microwave(id=1, name="Test", degrees=27, type=DeviceType.MICROWAVE)
-    return create_device_app(async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device)
+    return create_device_app(
+        async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device
+    )
 
 
 class TestElectronicDeviceApp:
-
     def test_set_degrees_and_timer_command(self, test_device_app: AsyncTyper) -> None:
         runner = CliRunner()
-        result = runner.invoke(test_device_app, args=["set-degrees-and-timer", "25", "30"])
+        result = runner.invoke(
+            test_device_app, args=["set-degrees-and-timer", "25", "30"]
+        )
         assert result.exit_code == 0
         assert "[INFO] Set Test degrees to 25" in result.output
         assert "[INFO] Set Test timer to 30" in result.output
 
-    def test_set_degrees_and_timer_validation_command(self, test_device_app: AsyncTyper) -> None:
+    def test_set_degrees_and_timer_validation_command(
+        self, test_device_app: AsyncTyper
+    ) -> None:
         runner = CliRunner()
 
-        result = runner.invoke(test_device_app, args=["set-degrees-and-timer", "test", "30"])
-        assert "Invalid value for 'DEGREES': 'test' is not a valid integer range." in result.output
+        result = runner.invoke(
+            test_device_app, args=["set-degrees-and-timer", "test", "30"]
+        )
+        assert (
+            "Invalid value for 'DEGREES': 'test' is not a valid integer range."
+            in result.output
+        )
         assert result.exit_code != 0
 
-        result = runner.invoke(test_device_app, args=["set-degrees-and-timer", "25", "test"])
-        assert "Invalid value for 'TIMER': 'test' is not a valid integer range." in result.output
+        result = runner.invoke(
+            test_device_app, args=["set-degrees-and-timer", "25", "test"]
+        )
+        assert (
+            "Invalid value for 'TIMER': 'test' is not a valid integer range."
+            in result.output
+        )
         assert result.exit_code != 0
 
-        result = runner.invoke(test_device_app, args=["set-degrees-and-timer", "0", "30"])
-        assert f"Invalid value for 'DEGREES': 0 is not in the range " \
-               f"{MicrowaveSettings.MIN_DEGREES}<=x<={MicrowaveSettings.MAX_DEGREES}." in result.output
+        result = runner.invoke(
+            test_device_app, args=["set-degrees-and-timer", "0", "30"]
+        )
+        assert (
+            f"Invalid value for 'DEGREES': 0 is not in the range "
+            f"{MicrowaveSettings.MIN_DEGREES}<=x<={MicrowaveSettings.MAX_DEGREES}."
+            in result.output
+        )
         assert result.exit_code != 0
 
-        result = runner.invoke(test_device_app, args=["set-degrees-and-timer", "40", "30"])
-        assert f"Invalid value for 'DEGREES': 40 is not in the range " \
-               f"{MicrowaveSettings.MIN_DEGREES}<=x<={MicrowaveSettings.MAX_DEGREES}." in result.output
+        result = runner.invoke(
+            test_device_app, args=["set-degrees-and-timer", "40", "30"]
+        )
+        assert (
+            f"Invalid value for 'DEGREES': 40 is not in the range "
+            f"{MicrowaveSettings.MIN_DEGREES}<=x<={MicrowaveSettings.MAX_DEGREES}."
+            in result.output
+        )
         assert result.exit_code != 0
 
     def test_get_degrees_command(self, test_device_app: AsyncTyper) -> None:

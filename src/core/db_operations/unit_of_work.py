@@ -3,10 +3,10 @@ from typing_extensions import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.repositories.air_conditioner_repository import \
-    AirConditionerSQLRepository
-from src.core.repositories.electronic_device_repository import \
-    ElectronicDeviceSQLRepository
+from src.core.repositories.air_conditioner_repository import AirConditionerSQLRepository
+from src.core.repositories.electronic_device_repository import (
+    ElectronicDeviceSQLRepository,
+)
 from src.core.repositories.microwave_repository import MicrowaveSQLRepository
 from src.core.repositories.tv_repository import TVSQLRepository
 from src.core.schemas import ElectronicDeviceSchema
@@ -20,7 +20,9 @@ class AsyncUnitOfWork:
     def __init__(self, session_factory: Callable[[], AsyncSession]) -> None:
         self._session_factory = session_factory
         self._session: AsyncSession
-        self.electronic_devices: ElectronicDeviceSQLRepository[ElectronicDevice, ElectronicDeviceSchema]
+        self.electronic_devices: ElectronicDeviceSQLRepository[
+            ElectronicDevice, ElectronicDeviceSchema
+        ]
         self.tvs: TVSQLRepository
         self.microwaves: MicrowaveSQLRepository
         self.air_conditioners: AirConditionerSQLRepository

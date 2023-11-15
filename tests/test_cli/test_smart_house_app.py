@@ -10,8 +10,7 @@ from tests.test_cli.utilities import create_session_factory
 from src.cli.configure_apps import build_app
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
-from src.core.models import (TV, AirConditioner, Base, ElectronicDevice,
-                             Microwave)
+from src.core.models import TV, AirConditioner, Base, ElectronicDevice, Microwave
 from src.core.utilities.enums import DeviceType
 
 async_pg_session = create_postgres_fixture(Base, session=True, async_=True)
@@ -19,7 +18,11 @@ async_pg_session = create_postgres_fixture(Base, session=True, async_=True)
 
 @pytest.fixture()
 def app() -> AsyncTyper:
-    app = AsyncTyper(name="Smart House", help="Available Commands for Smart House App", no_args_is_help=True)
+    app = AsyncTyper(
+        name="Smart House",
+        help="Available Commands for Smart House App",
+        no_args_is_help=True,
+    )
     return app
 
 
@@ -29,18 +32,25 @@ def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncS
 
 
 @pytest.fixture()
-def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUnitOfWork:
+def mock_async_uow(
+    async_session_factory: Callable[[], AsyncSession]
+) -> AsyncUnitOfWork:
     return AsyncUnitOfWork(async_session_factory)
 
 
 class TestElectronicDeviceApp:
-
-    def test_list_command(self, mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> None:
-        async_pg_session.add_all(instances=[ElectronicDevice(id=1, name="Test Device"),
-                                            Microwave(id=2, name="Test Microwave", type=DeviceType.MICROWAVE),
-                                            Microwave(id=3, name="Test Microwave2", type=DeviceType.MICROWAVE),
-                                            TV(id=4, name="Test TV", type=DeviceType.TV),
-                                            AirConditioner(id=5, name="Test AC", type=DeviceType.AIRCONDITIONER)])
+    def test_list_command(
+        self, mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession
+    ) -> None:
+        async_pg_session.add_all(
+            instances=[
+                ElectronicDevice(id=1, name="Test Device"),
+                Microwave(id=2, name="Test Microwave", type=DeviceType.MICROWAVE),
+                Microwave(id=3, name="Test Microwave2", type=DeviceType.MICROWAVE),
+                TV(id=4, name="Test TV", type=DeviceType.TV),
+                AirConditioner(id=5, name="Test AC", type=DeviceType.AIRCONDITIONER),
+            ]
+        )
 
         asyncio.get_event_loop().run_until_complete(async_pg_session.commit())
 

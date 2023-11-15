@@ -60,7 +60,9 @@ class SQLRepository(IRepository[TModel, TModelSchema]):
         statement = self._build_statement(id=record_id)
         record: TModel | None = await self.get_scalar(statement)
         if not record:
-            raise RecordNotFoundException(f"{self._model.__name__} with ID {record_id} not found.")
+            raise RecordNotFoundException(
+                f"{self._model.__name__} with ID {record_id} not found."
+            )
         else:
             return record
 
@@ -68,7 +70,9 @@ class SQLRepository(IRepository[TModel, TModelSchema]):
         statement = self._build_statement(col_name, id=record_id)
         col_value = await self.get_scalar(statement)
         if not col_value:
-            raise RecordNotFoundException(f"{self._model.__name__} with ID {record_id} not found.")
+            raise RecordNotFoundException(
+                f"{self._model.__name__} with ID {record_id} not found."
+            )
         else:
             return col_value
 

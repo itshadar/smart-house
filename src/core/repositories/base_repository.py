@@ -6,7 +6,6 @@ S = TypeVar("S")
 
 
 class IRepository(Generic[T, S], ABC):
-
     @abstractmethod
     def create(self, data: S) -> Union[T, Coroutine[Any, Any, T]]:
         ...

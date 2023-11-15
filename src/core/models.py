@@ -1,9 +1,12 @@
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import declarative_base
 
-from src.core.utilities.constants import (AirConditionerSettings,
-                                          ElectronicDeviceSettings,
-                                          MicrowaveSettings, TVSettings)
+from src.core.utilities.constants import (
+    AirConditionerSettings,
+    ElectronicDeviceSettings,
+    MicrowaveSettings,
+    TVSettings,
+)
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 Base = declarative_base()

@@ -6,12 +6,20 @@ from src.cli.commands.command_set_factory import DeviceCommandSetFactory
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
 from src.core.schemas import DeviceMetadata
-from src.core.repositories.electronic_device_repository import ElectronicDeviceBaseRepository
+from src.core.repositories.electronic_device_repository import (
+    ElectronicDeviceBaseRepository,
+)
 from src.core.utilities.enums import DeviceType
 
 
 class ContextDeviceAppObj:
-    def __init__(self, async_uow: AsyncUnitOfWork, device_id: int, device_name: str, device_type: DeviceType):
+    def __init__(
+        self,
+        async_uow: AsyncUnitOfWork,
+        device_id: int,
+        device_name: str,
+        device_type: DeviceType,
+    ):
         self.async_uow = async_uow
         self.device_id = device_id
         self.device_name = device_name
@@ -37,7 +45,10 @@ def build_device_app(
 ) -> AsyncTyper:
     def configure_device_driver(ctx: Context) -> None:
         ctx.obj = ContextDeviceAppObj(
-            async_uow=async_uow, device_id=device_id, device_name=device_name, device_type=device_type
+            async_uow=async_uow,
+            device_id=device_id,
+            device_name=device_name,
+            device_type=device_type,
         )
 
     device_app = AsyncTyper(

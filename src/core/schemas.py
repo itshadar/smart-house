@@ -2,8 +2,11 @@ from typing import NamedTuple, Optional
 
 from pydantic import BaseModel, Field
 
-from src.core.utilities.constants import (AirConditionerSettings,
-                                          MicrowaveSettings, TVSettings)
+from src.core.utilities.constants import (
+    AirConditionerSettings,
+    MicrowaveSettings,
+    TVSettings,
+)
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
@@ -26,18 +29,16 @@ class ElectronicDeviceSchema(BaseModel):
 
 class MicrowaveSchema(ElectronicDeviceSchema):
     degrees: Optional[int] = Field(
-        ge=MicrowaveSettings.MIN_DEGREES,
-        le=MicrowaveSettings.MAX_DEGREES, default=None
-)
-    timer: Optional[int] = Field(
-        ge=MicrowaveSettings.MIN_TIMER, default=None
+        ge=MicrowaveSettings.MIN_DEGREES, le=MicrowaveSettings.MAX_DEGREES, default=None
     )
+    timer: Optional[int] = Field(ge=MicrowaveSettings.MIN_TIMER, default=None)
 
 
 class AirConditionerSchema(ElectronicDeviceSchema):
     degrees: Optional[int] = Field(
         ge=AirConditionerSettings.MIN_DEGREES,
-        le=AirConditionerSettings.MAX_DEGREES, default=None
+        le=AirConditionerSettings.MAX_DEGREES,
+        default=None,
     )
 
 

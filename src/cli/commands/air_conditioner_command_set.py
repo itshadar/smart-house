@@ -1,7 +1,6 @@
 from typer import Argument, Context
 
-from src.cli.commands.electronic_device_command_set import \
-    ElectronicDeviceCommandSet
+from src.cli.commands.electronic_device_command_set import ElectronicDeviceCommandSet
 from src.cli.loggers import logger
 from src.core.utilities.constants import AirConditionerSettings
 

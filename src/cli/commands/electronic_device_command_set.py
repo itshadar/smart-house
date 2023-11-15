@@ -18,7 +18,9 @@ class ElectronicDeviceCommandSet(BaseCommandSet):
             logger.get_log(ctx.obj.device_name, "status", status.name)
 
         @self.app.command()
-        async def set_status(ctx: Context, status: DeviceStatus = Argument(default="OFF")) -> None:
+        async def set_status(
+            ctx: Context, status: DeviceStatus = Argument(default="OFF")
+        ) -> None:
             async with ctx.obj.async_uow:
                 await ctx.obj.repo.set_status(ctx.obj.device_id, status)
             logger.set_log(ctx.obj.device_name, "status", status.name)

@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-from src.cli.commands.air_conditioner_command_set import \
-    AirConditionerCommandSet
-from src.cli.commands.electronic_device_command_set import \
-    ElectronicDeviceCommandSet
+from src.cli.commands.air_conditioner_command_set import AirConditionerCommandSet
+from src.cli.commands.electronic_device_command_set import ElectronicDeviceCommandSet
 from src.cli.commands.microwave_command_set import MicrowaveCommandSet
 from src.cli.commands.tv_command_set import TVCommandSet
 from src.cli.utilities.async_typer import AsyncTyper
@@ -19,7 +17,9 @@ class DeviceCommandSetFactory:
     }
 
     @classmethod
-    def create(cls, device_type: DeviceType, app: AsyncTyper) -> ElectronicDeviceCommandSet:
+    def create(
+        cls, device_type: DeviceType, app: AsyncTyper
+    ) -> ElectronicDeviceCommandSet:
         command_set_class = cls.COMMAND_SETS.get(
             device_type, ElectronicDeviceCommandSet
         )

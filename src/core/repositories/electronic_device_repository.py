@@ -13,7 +13,9 @@ TDeviceSchema = TypeVar("TDeviceSchema", bound=ElectronicDeviceSchema)
 
 class ElectronicDeviceBaseRepository(ABC):
     @abstractmethod
-    async def get_devices_metadata(self, **filters: Dict[str, AnyStr]) -> list[DeviceMetadata]:
+    async def get_devices_metadata(
+        self, **filters: Dict[str, AnyStr]
+    ) -> list[DeviceMetadata]:
         ...
 
     @abstractmethod
@@ -25,13 +27,17 @@ class ElectronicDeviceBaseRepository(ABC):
         ...
 
 
-class ElectronicDeviceSQLRepository(SQLRepository[TDevice, TDeviceSchema], ElectronicDeviceBaseRepository):
+class ElectronicDeviceSQLRepository(
+    SQLRepository[TDevice, TDeviceSchema], ElectronicDeviceBaseRepository
+):
     _model = ElectronicDevice
 
     def __init__(self, session: AsyncSession) -> None:
         super().__init__(session, self._model)
 
-    async def get_devices_metadata(self, **filters: Dict[str, AnyStr]) -> list[DeviceMetadata]:
+    async def get_devices_metadata(
+        self, **filters: Dict[str, AnyStr]
+    ) -> list[DeviceMetadata]:
         statement = self._build_statement(*DeviceMetadata._fields, **filters)
         devices_metadata = await self.get_all(statement)
         return [DeviceMetadata(*device) for device in devices_metadata]

@@ -18,7 +18,10 @@ async def list_devices(uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
 
 
 @router.get("/devices/{device_id}/status", response_model=DeviceStatus)
-async def get_device_status(device_id: int = Path(..., description="The unique identifier of the device"), uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
+async def get_device_status(
+    device_id: int = Path(..., description="The unique identifier of the device"),
+    uow: AsyncUnitOfWork = Depends(get_async_uow),
+) -> None:
     """
     Get the status of a specific device.
     """
@@ -27,9 +30,13 @@ async def get_device_status(device_id: int = Path(..., description="The unique i
 
 
 @router.put("/devices/{device_id}/status", response_model=DeviceStatus)
-async def set_device_status(device_id: int = Path(..., description="The unique identifier of the device"),
-                            status: SetDeviceStatusRequest = Body(..., description="New status to set for the device"),
-                            uow: AsyncUnitOfWork = Depends(get_async_uow)) -> None:
+async def set_device_status(
+    device_id: int = Path(..., description="The unique identifier of the device"),
+    status: SetDeviceStatusRequest = Body(
+        ..., description="New status to set for the device"
+    ),
+    uow: AsyncUnitOfWork = Depends(get_async_uow),
+) -> None:
     """
     Set the status of a specific device.
     """

@@ -3,7 +3,9 @@ from abc import ABC, abstractmethod
 from src.core.models import AirConditioner
 from src.core.schemas import AirConditionerSchema
 from src.core.repositories.electronic_device_repository import (
-    ElectronicDeviceBaseRepository, ElectronicDeviceSQLRepository)
+    ElectronicDeviceBaseRepository,
+    ElectronicDeviceSQLRepository,
+)
 
 
 class AirConditionerBaseRepository(ElectronicDeviceBaseRepository, ABC):
@@ -17,7 +19,8 @@ class AirConditionerBaseRepository(ElectronicDeviceBaseRepository, ABC):
 
 
 class AirConditionerSQLRepository(
-    AirConditionerBaseRepository, ElectronicDeviceSQLRepository[AirConditioner, AirConditionerSchema]
+    AirConditionerBaseRepository,
+    ElectronicDeviceSQLRepository[AirConditioner, AirConditionerSchema],
 ):
     _model = AirConditioner
 

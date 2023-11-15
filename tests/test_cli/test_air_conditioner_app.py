@@ -21,18 +21,25 @@ def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncS
 
 
 @pytest.fixture()
-def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUnitOfWork:
+def mock_async_uow(
+    async_session_factory: Callable[[], AsyncSession]
+) -> AsyncUnitOfWork:
     return AsyncUnitOfWork(async_session_factory)
 
 
 @pytest.fixture()
-def test_device_app(mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> AsyncTyper:
-    test_device = AirConditioner(id=1, name="Test", degrees=15, type=DeviceType.AIRCONDITIONER)
-    return create_device_app(async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device)
+def test_device_app(
+    mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession
+) -> AsyncTyper:
+    test_device = AirConditioner(
+        id=1, name="Test", degrees=15, type=DeviceType.AIRCONDITIONER
+    )
+    return create_device_app(
+        async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device
+    )
 
 
 class TestElectronicDeviceApp:
-
     def test_set_degrees_command(self, test_device_app: AsyncTyper) -> None:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["set-degrees", "20"])
@@ -42,17 +49,26 @@ class TestElectronicDeviceApp:
     def test_set_degrees_validation_command(self, test_device_app: AsyncTyper) -> None:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["set-degrees", "test"])
-        assert "Invalid value for 'DEGREES': 'test' is not a valid integer range." in result.output
+        assert (
+            "Invalid value for 'DEGREES': 'test' is not a valid integer range."
+            in result.output
+        )
         assert result.exit_code != 0
 
         result = runner.invoke(test_device_app, args=["set-degrees", "0"])
-        assert f"Invalid value for 'DEGREES': 0 is not in the range " \
-               f"{AirConditionerSettings.MIN_DEGREES}<=x<={AirConditionerSettings.MAX_DEGREES}." in result.output
+        assert (
+            f"Invalid value for 'DEGREES': 0 is not in the range "
+            f"{AirConditionerSettings.MIN_DEGREES}<=x<={AirConditionerSettings.MAX_DEGREES}."
+            in result.output
+        )
         assert result.exit_code != 0
 
         result = runner.invoke(test_device_app, args=["set-degrees", "40"])
-        assert f"Invalid value for 'DEGREES': 40 is not in the range " \
-               f"{AirConditionerSettings.MIN_DEGREES}<=x<={AirConditionerSettings.MAX_DEGREES}." in result.output
+        assert (
+            f"Invalid value for 'DEGREES': 40 is not in the range "
+            f"{AirConditionerSettings.MIN_DEGREES}<=x<={AirConditionerSettings.MAX_DEGREES}."
+            in result.output
+        )
         assert result.exit_code != 0
 
     def test_get_degrees_command(self, test_device_app: AsyncTyper) -> None:

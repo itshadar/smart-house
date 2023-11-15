@@ -21,34 +21,46 @@ def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncS
 
 
 @pytest.fixture()
-def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUnitOfWork:
+def mock_async_uow(
+    async_session_factory: Callable[[], AsyncSession]
+) -> AsyncUnitOfWork:
     return AsyncUnitOfWork(async_session_factory)
 
 
 @pytest.fixture()
-def test_device_app(mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> AsyncTyper:
+def test_device_app(
+    mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession
+) -> AsyncTyper:
     test_device = TV(id=1, name="Test", channel=2, type=DeviceType.TV)
-    return create_device_app(async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device)
+    return create_device_app(
+        async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device
+    )
 
 
 class TestElectronicDeviceApp:
-
     def test_switch_channel_command(self, test_device_app: AsyncTyper) -> None:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["switch-channel", "4"])
         assert result.exit_code == 0
         assert "[INFO] Set Test channel to 4" in result.output
 
-    def test_switch_channel_validation_command(self, test_device_app: AsyncTyper) -> None:
+    def test_switch_channel_validation_command(
+        self, test_device_app: AsyncTyper
+    ) -> None:
         runner = CliRunner()
 
         result = runner.invoke(test_device_app, args=["switch-channel", "TestChannel"])
-        assert "Invalid value for 'CHANNEL': 'TestChannel' is not a valid integer range." in result.output
+        assert (
+            "Invalid value for 'CHANNEL': 'TestChannel' is not a valid integer range."
+            in result.output
+        )
         assert result.exit_code != 0
 
         result = runner.invoke(test_device_app, args=["switch-channel", "10001"])
-        assert f"Invalid value for 'CHANNEL': 10001 is not in the range " \
-               f"{TVSettings.MIN_CHANNEL}<=x<={TVSettings.MAX_CHANNEL}. " in result.output
+        assert (
+            f"Invalid value for 'CHANNEL': 10001 is not in the range "
+            f"{TVSettings.MIN_CHANNEL}<=x<={TVSettings.MAX_CHANNEL}. " in result.output
+        )
         assert result.exit_code != 0
 
     def test_get_channel_command(self, test_device_app: AsyncTyper) -> None:

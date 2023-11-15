@@ -20,18 +20,23 @@ def async_session_factory(async_pg_session: AsyncSession) -> Callable[[], AsyncS
 
 
 @pytest.fixture
-def mock_async_uow(async_session_factory: Callable[[], AsyncSession]) -> AsyncUnitOfWork:
+def mock_async_uow(
+    async_session_factory: Callable[[], AsyncSession]
+) -> AsyncUnitOfWork:
     return AsyncUnitOfWork(async_session_factory)
 
 
 @pytest.fixture()
-def test_device_app(mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession) -> AsyncTyper:
+def test_device_app(
+    mock_async_uow: AsyncUnitOfWork, async_pg_session: AsyncSession
+) -> AsyncTyper:
     test_device = ElectronicDevice(id=1, name="Test", status=DeviceStatus.OFF)
-    return create_device_app(async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device)
+    return create_device_app(
+        async_uow=mock_async_uow, async_pg_session=async_pg_session, device=test_device
+    )
 
 
 class TestElectronicDeviceApp:
-
     def test_set_status_command(self, test_device_app: AsyncTyper) -> None:
         runner = CliRunner()
         result = runner.invoke(test_device_app, args=["set-status", "ON"])

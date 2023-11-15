@@ -8,19 +8,26 @@ from src.core.repositories.microwave_repository import MicrowaveSQLRepository
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def test_device() -> Microwave:
-    return Microwave(id=1, name="Test Microwave", status=DeviceStatus.OFF, degrees=30,
-                     type=DeviceType.MICROWAVE, timer=0)
+    return Microwave(
+        id=1,
+        name="Test Microwave",
+        status=DeviceStatus.OFF,
+        degrees=30,
+        type=DeviceType.MICROWAVE,
+        timer=0,
+    )
 
 
 pg_session = create_postgres_fixture(Microwave, session=True, async_=True)
 
 
 class TestTVSQLRepository:
-
     @pytest.mark.asyncio
-    async def test_get_degrees(self, test_device: Microwave, pg_session: AsyncSession) -> None:
+    async def test_get_degrees(
+        self, test_device: Microwave, pg_session: AsyncSession
+    ) -> None:
         pg_session.add(test_device)
         await pg_session.commit()
 
@@ -31,7 +38,9 @@ class TestTVSQLRepository:
         assert actual_degrees == excepted_degrees
 
     @pytest.mark.asyncio
-    async def test_set_degrees_and_timer(self, test_device: Microwave, pg_session: AsyncSession) -> None:
+    async def test_set_degrees_and_timer(
+        self, test_device: Microwave, pg_session: AsyncSession
+    ) -> None:
         pg_session.add(test_device)
         await pg_session.commit()
 
