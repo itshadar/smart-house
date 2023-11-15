@@ -1,17 +1,18 @@
-import pytest
 from typing import Type
+
+import pytest
 from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models import ElectronicDevice
-from src.core.schemas import ElectronicDeviceSchema
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceSQLRepository,
 )
+from src.core.schemas import ElectronicDeviceSchema
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_device() -> ElectronicDevice:
     return ElectronicDevice(id=1, name="Test Device", status=DeviceStatus.OFF)
 
@@ -20,7 +21,7 @@ pg_session = create_postgres_fixture(ElectronicDevice, session=True, async_=True
 
 
 class TestElectronicDeviceSQLRepository:
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_devices_metadata(
         self, test_device: ElectronicDevice, pg_session: AsyncSession
     ) -> None:
@@ -37,7 +38,7 @@ class TestElectronicDeviceSQLRepository:
         assert devices_metadata[0].id == 1
         assert devices_metadata[0].type == DeviceType.OTHER
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_status(
         self, test_device: ElectronicDevice, pg_session: AsyncSession
     ) -> None:
@@ -52,7 +53,7 @@ class TestElectronicDeviceSQLRepository:
 
         assert actual_status == excepted_status
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_set_status(
         self, test_device: ElectronicDevice, pg_session: AsyncSession
     ) -> None:

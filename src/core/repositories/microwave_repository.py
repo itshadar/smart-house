@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 from src.core.models import Microwave
-from src.core.schemas import MicrowaveSchema
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceBaseRepository,
     ElectronicDeviceSQLRepository,
 )
+from src.core.schemas import MicrowaveSchema
 
 
 class MicrowaveBaseRepository(ElectronicDeviceBaseRepository, ABC):

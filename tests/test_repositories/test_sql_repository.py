@@ -1,17 +1,17 @@
-import pytest
 from typing import Type
+
+import pytest
 from pytest_mock_resources import create_postgres_fixture
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models import TV, AirConditioner, Base, ElectronicDevice, Microwave
-
+from src.core.repositories.sql_repository import SQLRepository
 from src.core.schemas import (
-    ElectronicDeviceSchema,
     AirConditionerSchema,
+    ElectronicDeviceSchema,
     MicrowaveSchema,
     TVSchema,
 )
-from src.core.repositories.sql_repository import SQLRepository
 from src.core.utilities.constants import (
     AirConditionerSettings,
     ElectronicDeviceSettings,
@@ -21,7 +21,7 @@ from src.core.utilities.constants import (
 from src.core.utilities.enums import DeviceType
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_device() -> ElectronicDevice:
     return ElectronicDevice(id=1, name="Test Device")
 
@@ -29,7 +29,7 @@ def test_device() -> ElectronicDevice:
 pg_session: AsyncSession = create_postgres_fixture(Base, session=True, async_=True)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def sql_electronic_device_repository(
     pg_session: AsyncSession,
 ) -> SQLRepository[ElectronicDevice, ElectronicDeviceSchema]:
@@ -37,7 +37,7 @@ def sql_electronic_device_repository(
 
 
 class TestSQLRepository:
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_create_electronic_device(self, pg_session: AsyncSession) -> None:
         electronic_device_schema = ElectronicDeviceSchema(
             name="Test Device", location="Test Room"
@@ -52,7 +52,7 @@ class TestSQLRepository:
         assert device.status == ElectronicDeviceSettings.DEFAULT_STATUS
         assert device.id is not None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_create_microwave(self, pg_session: AsyncSession) -> None:
         microwave_schema = MicrowaveSchema(
             name="Test Microwave", location="Test Kitchen", type=DeviceType.MICROWAVE
@@ -68,7 +68,7 @@ class TestSQLRepository:
         assert device.timer == MicrowaveSettings.DEFAULT_TIMER
         assert device.id is not None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_create_tv(self, pg_session: AsyncSession) -> None:
         tv_schema = TVSchema(
             name="Test TV", location="Test TV location", type=DeviceType.TV
@@ -81,7 +81,7 @@ class TestSQLRepository:
         assert device.channel == TVSettings.DEFAULT_CHANNEL
         assert device.id is not None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_create_air_conditioner(self, pg_session: AsyncSession) -> None:
         ac_schema = AirConditionerSchema(
             name="Test AC", location="Test AC location", type=DeviceType.AIRCONDITIONER
@@ -96,7 +96,7 @@ class TestSQLRepository:
         assert device.degrees == AirConditionerSettings.DEFAULT_DEGREES
         assert device.id is not None
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_by_id(
         self,
         pg_session: AsyncSession,
@@ -111,7 +111,7 @@ class TestSQLRepository:
 
         assert actual_device == test_device
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_list_all_electronic_devices(
         self,
         pg_session: AsyncSession,
@@ -137,7 +137,7 @@ class TestSQLRepository:
         assert len(all_electronic_devices) == 5
         assert all_electronic_devices_ids == [1, 2, 3, 4, 5]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_list_all_microwaves(self, pg_session: AsyncSession) -> None:
         pg_session.add_all(
             instances=[
@@ -161,7 +161,7 @@ class TestSQLRepository:
         assert len(all_microwaves) == 2
         assert all_microwaves_ids == [2, 3]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_add(
         self,
         test_device: ElectronicDevice,
@@ -178,7 +178,7 @@ class TestSQLRepository:
         assert actual_device is not None, "Device not found"
         assert actual_device == test_device
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_update(
         self,
         test_device: ElectronicDevice,
@@ -202,7 +202,7 @@ class TestSQLRepository:
         assert updated_device == test_device
         assert updated_device.location == "TestLocation"
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_delete(
         self,
         test_device: ElectronicDevice,

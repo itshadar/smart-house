@@ -1,6 +1,3 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict
-
 from src.cli.commands.air_conditioner_command_set import AirConditionerCommandSet
 from src.cli.commands.electronic_device_command_set import ElectronicDeviceCommandSet
 from src.cli.commands.microwave_command_set import MicrowaveCommandSet

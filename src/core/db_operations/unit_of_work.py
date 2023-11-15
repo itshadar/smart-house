@@ -1,8 +1,9 @@
-from typing import Callable, Any
-from typing_extensions import Self
+from typing import Any, Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import Self
 
+from src.core.models import ElectronicDevice
 from src.core.repositories.air_conditioner_repository import AirConditionerSQLRepository
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceSQLRepository,
@@ -10,8 +11,6 @@ from src.core.repositories.electronic_device_repository import (
 from src.core.repositories.microwave_repository import MicrowaveSQLRepository
 from src.core.repositories.tv_repository import TVSQLRepository
 from src.core.schemas import ElectronicDeviceSchema
-from src.core.models import ElectronicDevice
-
 
 from .session import get_async_session
 

@@ -23,9 +23,6 @@ class ElectronicDeviceSchema(BaseModel):
     status: Optional[DeviceStatus] = None
     type: Optional[DeviceType] = None
 
-    # class ConfigDict:
-    #     from_attributes = True
-
 
 class MicrowaveSchema(ElectronicDeviceSchema):
     degrees: Optional[int] = Field(

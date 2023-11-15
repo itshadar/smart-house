@@ -5,10 +5,10 @@ from typer import Context
 from src.cli.commands.command_set_factory import DeviceCommandSetFactory
 from src.cli.utilities.async_typer import AsyncTyper
 from src.core.db_operations import AsyncUnitOfWork
-from src.core.schemas import DeviceMetadata
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceBaseRepository,
 )
+from src.core.schemas import DeviceMetadata
 from src.core.utilities.enums import DeviceType
 
 

@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 from src.core.models import AirConditioner
-from src.core.schemas import AirConditionerSchema
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceBaseRepository,
     ElectronicDeviceSQLRepository,
 )
+from src.core.schemas import AirConditionerSchema
 
 
 class AirConditionerBaseRepository(ElectronicDeviceBaseRepository, ABC):

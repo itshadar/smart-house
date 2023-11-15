@@ -1,14 +1,16 @@
 import json
 import os
-from typing import Iterator, Dict, Any
+from typing import Any, Dict, Iterator
+
 from anyio import run
-from src.core.schemas import (
-    ElectronicDeviceSchema,
-    TVSchema,
-    MicrowaveSchema,
-    AirConditionerSchema,
-)
+
 from src.core.db_operations import get_async_uow
+from src.core.schemas import (
+    AirConditionerSchema,
+    ElectronicDeviceSchema,
+    MicrowaveSchema,
+    TVSchema,
+)
 from src.core.utilities.enums import DeviceType
 
 repository_class = {

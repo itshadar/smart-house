@@ -1,14 +1,15 @@
+from typing import Type
+
 import pytest
 from pytest_mock_resources import create_postgres_fixture
-from sqlalchemy.sql import select
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncResult
-from typing import Type
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.core.models import AirConditioner
 from src.core.repositories.air_conditioner_repository import AirConditionerSQLRepository
 from src.core.utilities.enums import DeviceStatus, DeviceType
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def test_device() -> AirConditioner:
     return AirConditioner(
         id=1,
@@ -23,7 +24,7 @@ pg_session = create_postgres_fixture(AirConditioner, session=True, async_=True)
 
 
 class TestTVSQLRepository:
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_degrees(
         self, test_device: AirConditioner, pg_session: AsyncSession
     ) -> None:
@@ -36,7 +37,7 @@ class TestTVSQLRepository:
 
         assert actual_degrees == excepted_degrees
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_set_degrees(
         self, test_device: AirConditioner, pg_session: AsyncSession
     ) -> None:

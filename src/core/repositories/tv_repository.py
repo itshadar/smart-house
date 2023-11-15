@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 from src.core.models import TV
-from src.core.schemas import TVSchema
 from src.core.repositories.electronic_device_repository import (
     ElectronicDeviceBaseRepository,
     ElectronicDeviceSQLRepository,
 )
+from src.core.schemas import TVSchema
 
 
 class TVBaseRepository(ElectronicDeviceBaseRepository, ABC):
