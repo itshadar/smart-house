@@ -3,11 +3,12 @@ FROM python:3.10-slim-buster
 WORKDIR /app
 
 COPY ./Pipfile ./
-COPY ./config.py ./
-COPY ./db_scripts ./db_scripts
-COPY ./src/cli ./app/cli
-COPY ./src/core  ./app/core
-COPY ./src/__init__.py  ./app/
+COPY ./setup.cfg ./
+COPY ./src/cli ./src/cli
+COPY ./src/core  ./src/core
+COPY ./src/db_scripts  ./src/db_scripts
+COPY ./src/__init__.py  ./src/
+COPY ./src/config.py ./src/
 COPY ./alembic.ini  ./
 
 
